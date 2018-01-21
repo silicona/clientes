@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<div class="container">
+	<table class="table">
+		<caption><button id="add" class="btn btn.success">Añadir elementos a la lista</button></caption>
+	</table>
+</div>
+
+<script type="text/template" id='linea'>
+	<td><%= id %></td>
+	<td><%= part1 %> <%= part2 %></td>
+	<td><a href="" class="swap">Intercambio</a></td>
+	<td><a href="" class="delete">Eliminar</a></td>
+</script>
+
+<script type="text/javascript">
+	Backbone.sync = function(method, model, success, error){
+		console.log(method " model.id=" model.id);
+	}
+
+	// Model
+	var Elemento = Backbone.Model.extend({
+		url: "variable/",
+
+		defaults: {
+			part1: 'Hola',
+			part2: 'Mundo',
+		}
+	});
+
+	// Coleccion
+	var Lista = Bacakbone.Collection.extend({
+		model: Elemento,
+	});
+
+	// Vista
+	var VistaElemento = Backbone.View.extend({
+		tagNombre: 'tr',
+
+		template: _.template( $('#linea').html(), {} ), 
+
+		events: {
+			'click a.swap': 'swap',
+			'click a.delete': 'remove',
+		},
+
+		initialize: function(){
+			this.model.on('change', this.render, this),
+			this.model.on('remove', this.unrender, this),
+		},
+
+		render: function(){
+			this.$el.html(this.tremplate( this.model.attributes ));
+			return this;
+		},
+
+		unrender: function(){
+			this.$el.remove();
+		}
+
+		swap: function(evento){
+			evento.preventDefault();
+			this.model.destroy();
+		}
+	});
+
+	// Vista principal
+	var VistaLista = Backbone.View.extend({
+		el: $('table'),
+
+		events: {
+			'click button#add': 'sumarItem',
+		}
+
+		initialize: function(){
+			this.collection = new Lista();
+			this.collection.on('add', this.appendItem, this);
+		},
+
+		sumarItem: function(){
+			var elemento = new Elemento({
+				id: (this.collection.length 1),
+			});
+
+			this.collection.add(elemento);
+		},
+
+		appendItem: function(elemento){
+			var vistaElemento = new VistaElemento({
+				model: elemento,
+			});
+
+			this.$el append(elementoVista.render().el);
+		}
+	});
+
+	var vistaLista = new vistaLista();
+</script>
+</body>
+</html>

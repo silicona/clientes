@@ -1,0 +1,105 @@
+La bandera	
+Código ISO 2	
+Código ISO 3	
+País	
+Capital	
+Prefijo
+
+Albania
+	AL	ALB	Albania	Tirana	+355
+Alemania
+	DE	DEU	Alemania	Berlin	+49
+Andorra
+	AD	AND	Andorra	Andorra la Vella	+376
+Austria
+	AT	AUT	Austria	Vienna	+43
+Bélgica
+	BE	BEL	Bélgica	Brussels	+32
+Bielorrusia
+	BY	BLR	Bielorrusia	Minsk	+375
+Bosnia-Herzegovina
+	BA	BIH	Bosnia-Herzegovina	Sarajevo	+387
+Bulgaria
+	BG	BGR	Bulgaria	Sofia	+359
+Chipre
+	CY	CYP	Chipre	Nicosia	+357
+Croacia
+	HR	HRV	Croacia	Zagreb	+385
+Dinamarca
+	DK	DNK	Dinamarca	Copenhagen	+45
+El Vaticano
+	VA	VAT	El Vaticano	Vatican City	+39
+Eslovaquia
+	SK	SVK	Eslovaquia	Bratislava	+421
+Eslovenia
+	SI	SVN	Eslovenia	Ljubljana	+386
+España
+	ES	ESP	España	Madrid	+34
+Estonia
+	EE	EST	Estonia	Tallinn	+372
+Finlandia
+	FI	FIN	Finlandia	Helsinki	+358
+Francia
+	FR	FRA	Francia	Paris	+33
+Gibraltar
+	GI	GIB	Gibraltar	Gibraltar	+350
+Grecia
+	GR	GRC	Grecia	Athens	+30
+Holanda
+	NL	NLD	Holanda	Amsterdam	+31
+Hungría
+	HU	HUN	Hungría	Budapest	+36
+Irlanda
+	IE	IRL	Irlanda	Dublin	+353
+Isla de Man
+	IM	IMN	Isla de Man	Douglas, Isle of Man	+44
+Islandia
+	IS	ISL	Islandia	Reykjavík	+354
+Islas Feroe
+	FO	FRO	Islas Feroe	Tórshavn	+298
+Italia
+	IT	ITA	Italia	Rome	+39
+Kosovo
+	XK	XKX	Kosovo	Pristina	+381
+Letonia
+	LV	LVA	Letonia	Riga	+371
+Liechtenstein
+	LI	LIE	Liechtenstein	Vaduz	+423
+Lituania
+	LT	LTU	Lituania	Vilnius	+370
+Luxemburgo
+	LU	LUX	Luxemburgo	Luxembourg	+352
+Macedonia
+	MK	MKD	Macedonia	Skopje	+389
+Malta
+	MT	MLT	Malta	Valletta	+356
+Moldavia
+	MD	MDA	Moldavia	Chişinău	+373
+Mónaco
+	MC	MCO	Mónaco	Monaco	+377
+Montenegro
+	ME	MNE	Montenegro	Podgorica	+382
+Noruega
+	NO	NOR	Noruega	Oslo	+47
+Polonia
+	PL	POL	Polonia	Warsaw	+48
+Portugal
+	PT	PRT	Portugal	Lisbon	+351
+Reino Unido
+	GB	GBR	Reino Unido	London	+44
+República Checa
+	CZ	CZE	República Checa	Prague	+420
+Rumanía
+	RO	ROU	Rumanía	Bucharest	+40
+Rusia
+	RU	RUS	Rusia	Moscow	+7
+San Marino
+	SM	SMR	San Marino	San Marino	+378
+Serbia
+	RS	SRB	Serbia	Belgrade	+381
+Suecia
+	SE	SWE	Suecia	Stockholm	+46
+Suiza
+	CH	CHE	Suiza	Berne	+41
+Ucrania
+	UA	UKR	Ucrania	Kiev	+380

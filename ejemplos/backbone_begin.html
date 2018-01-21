@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Hello World in Backbone.js</title>
+
+  <style type="text/css">
+    #todo-list input.editar {
+      display: none; /* Hides input box*/
+    }
+    #todo-list .editando label {
+      display: none; /* Hides label text when .editing*/
+    }
+    #todo-list .editando input.editar {
+      display: inline; /* Shows input text box when .editing*/
+    }
+  </style>
+</head>
+<body>
+  <!-- ========= -->
+  <!-- Your HTML -->
+  <!-- ========= -->
+
+  <section id="todoapp">
+    <header id="header">
+      <h1>Todos</h1>
+      <h3>De <a href="http://adrianmejia.com/blog/2012/09/13/backbone-js-for-absolute-beginners-getting-started/">Adrian Mejia</a></h3>
+      <input id="new-todo" placeholder="que hay que hacer?">
+      <div>
+        <a href="test.php">ir a Test</a>
+        <a href="#/mostrar">Mostrar todo</a>
+        <a href="#/pendiente">Pendiente</a>
+        <a href="#/completado">completado</a>
+      </div>
+    </header>
+    <section id="main">
+      <ul id="todo-list"></ul>
+    </section>
+  </section>
+
+  <div id="container">Cargando...</div>
+  <!-- ========= -->
+  <!-- Libraries -->
+  <!-- ========= -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js" type="text/javascript"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js" type="text/javascript"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.0/backbone.localStorage-min.js" type="text/javascript"></script>  
+  
+  <!-- =============== -->
+  <!-- Javascript code -->
+  <!-- =============== -->
+  <script type="text/template" id="item-template">
+    <div class="view">
+      <input class="toggle" type="checkbox" <%= completado ? 'checked' : ''%>>
+      <label><%- title %></label>
+      <input class="editar" value="<%- title %>">
+      <input type="button" class="borrar" value="Borrar" name="">
+    </div>
+  </script>
+
+  <script type="text/javascript">
+
+    var app = {}; // Crea el espacio de nombre
+
+    // Modelo
+      app.Todo = Backbone.Model.extend({
+        defaults: {
+          title: '',
+          completado: false
+        },
+        cambiar: function(){
+          this.save({ completado: !this.get('completado') });
+        },
+      });
+
+    // Coleccion 
+      app.TodoList = Backbone.Collection.extend({
+        model: app.Todo,
+        localStorage: new Store("backbone-todo"),
+          // Añadiendo window.filtro
+        completados: function(){
+          return this.filter(function(todo){
+            return todo.get('completado');
+          });
+        },
+        procesando: function(){
+          console.log('procesando');
+          return this.without.apply( this, this.completados() );
+        }
+      });
+    
+      //app.todoList = new app.TodoList();
+
+    // Vista
+      // renders individual todo items list (li)
+      app.TodoView = Backbone.View.extend({
+        tagName: 'li',
+        template: _.template($('#item-template').html()),
+
+        render: function(){
+          this.$el.html(this.template(this.model.toJSON()));
+            // Editar
+          this.input = this.$('.editar');
+          return this; // enable chained calls
+        },
+
+        initialize: function(){
+          //this.model.on('destroy', this.eliminar, this);
+            // Metodo jquery desde initialize
+          this.model.on('destroy', this.remove, this);
+            // Editar - evento change
+          this.model.on('change', this.render, this);
+        },
+
+        eliminar: function(){
+          this.$el.remove();
+        },
+
+        events: {
+          'click .borrar': 'borrar',
+          'click .toggle': 'toggleCompletado',
+            // Borrar
+          //'click .destroy': 'destruir',
+            // Editar - Eventos provocados
+          'dblclick label' : 'editar',
+          'keypress .editar' : 'actualizarConEnter',
+          'blur .editar' : 'cerrar',
+        },
+
+        borrar: function(){
+          this.model.destroy();
+        },
+
+        toggleCompletado: function(){
+            // Función en el modelo
+          this.model.cambiar();
+        },
+
+        editar: function(){
+          this.$el.addClass('editando');
+          this.input.focus();
+        },
+
+        actualizarConEnter: function(evento){
+          if(evento.which == 13){ this.cerrar(); }
+        },
+
+        cerrar: function(){
+          var valor = this.input.val().trim();
+          if(valor){ this.model.save({ title: valor }) }
+          this.$el.removeClass('editando');
+        },
+      });
+
+      // renders the full list of todo items calling TodoView for each one.
+      app.AppView = Backbone.View.extend({
+        el: '#todoapp',
+        initialize: function () {
+          //console.log('Dentro: ', app)
+          this.input = this.$('#new-todo');
+          // when new elements are added to the collection render then with addOne
+          app.todoList.on('add', this.addOne, this);
+          app.todoList.on('reset', this.addAll, this);
+          app.todoList.fetch(); // Loads list from local storage
+        },
+        events: {
+          'keypress #new-todo': 'createTodoOnEnter'
+        },
+        createTodoOnEnter: function(e){
+          if ( e.which !== 13 || !this.input.val().trim() ) { // ENTER_KEY = 13
+            return;
+          }
+          app.todoList.create(this.newAttributes());
+          this.input.val(''); // clean input box
+
+        },
+        addOne: function(todo){
+          var view = new app.TodoView({model: todo});
+          $('#todo-list').append(view.render().el);
+        },
+        addAll: function(){
+          this.$('#todo-list').html(''); // clean the todo list
+            // Añadirendo el window.filtro - Procesando la ruta desde la vista
+          //app.todoList.each(this.addOne, this);
+          switch(window.filtro){
+              // Métodos en Coleccion
+            case 'pendiente':
+            console.log('En pendiente');
+              _.each(app.todoList.procesando(), this.addOne);
+              break;
+            case 'completado':
+            console.log('En completado');
+              _.each(app.todoList.completados(), this.addOne);
+              break;
+            case 'mostrar' :
+            console.log('En def');
+              app.todoList.each(this.addOne, this);
+              break;
+            default:
+
+              break;
+          }
+        },
+        newAttributes: function(){
+          return {
+            title: this.input.val().trim(),
+            completed: false
+          }
+        }
+      });
+
+    // Router
+      app.Router = Backbone.Router.extend({
+        routes: {
+          //'': 'inicio',
+          '*filtro': 'establecerFiltro',
+        },
+
+        inicio: function(){
+          //app.appView = new app.AppView();
+        },
+
+        establecerFiltro: function(parametros){
+          //console.log('params = ' + parametros);
+          window.filtro = parametros.trim() || '';
+          app.todoList.trigger('reset');
+        }
+      });
+
+      app.todoList = new app.TodoList();
+
+      app.router = new app.Router();
+      Backbone.history.start();
+
+      app.appView = new app.AppView();
+
+    // Basico
+      var objecto = {};
+      var funcionCallback = function(mensaje) { console.log("Disparado el evento con:  " + mensaje); };
+      _.extend(objecto, Backbone.Events);
+
+      objecto.on("evento_propio", funcionCallback);
+      objecto.trigger("evento_propio", "Texto adjunto al evento propio");
+
+      var AppView = Backbone.View.extend({
+        tagName: 'section',
+          // el - stands for element. Every view has a element associate in with HTML content will be rendered.
+        el: '#container',
+          // template which has the placeholder 'who' to be substitute later
+        template: _.template("<h3><%= who %></h3><p><%= fuera %>"),
+          // It's the first function called when this view it's instantiated.
+        initialize: function(){
+          //this.render();
+        },
+          // $el - it's a cached jQuery object (el), in which you can use jQuery functions to push content. Like the Hello World in this case.
+        render: function(){
+          //this.$el.html("Hello World");
+          this.$el.html(this.template({ who: 'Who is the doctor?', fuera: this.fuera }));
+        }
+      });
+
+      var appView = new AppView();
+      appView.fuera = 'Desde el exterior';
+      appView.render();
+
+      console.log('Modelo');
+      var todo = new app.Todo({ title: 'Learn Backbone.js', completado: false }); // create object with the attributes specified.
+      console.log(todo.get('title')); // "Learn Backbone.js"
+      console.log(todo.get('completado')); // false
+      console.log(todo.get('created_at')); // undefined
+      todo.set('created_at', Date());
+      console.log(todo.get('created_at')); // "Wed Sep 12 2012 12:51:17 GMT-0400 (EDT)"
+
+      console.log('Coleccion');
+      var todoList = new app.TodoList();
+      todoList.create({title: 'Colección creda desde Básico'}); // notice: that `completed` will be set to false by default.
+      console.log('Coleccion: ',todoList.toJSON());
+      var modelo = new app.Todo({ title: 'Learn Models', completado: true });
+      todoList.add(modelo);
+      todoList.pluck('title');     // ["Learn Backbone's Collection", "Learn Models"]
+      todoList.pluck('completado'); // [false, true]
+      console.log('stringfy: ',JSON.stringify(todoList));    // "[{"title":"Learn Backbone's Collection","completed":false,"id":"d9763e99-2267-75f5-62c3-9d7e40742aa6"},{"title":"Learn Models","completed":true}]"
+
+      var view = new app.TodoView({ model: todo });
+
+  </script>
+  
+</body>
+</html>

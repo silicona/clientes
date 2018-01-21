@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<div class="container">
+	<table class="table">
+		<caption><button id="add" class="btn btn-success">añadir elementos a la vista</button></caption>
+</div>
+
+<script type="text/javascript">
+	var Elemento = Backbone.Model.extend({
+		defaults: {
+			part1: 'Hola',
+			part2: 'mundo',
+		}
+	});
+
+	// Coleccion
+	var Lista = Backbone.Collection.extend({
+		model: Elemento,
+	});
+
+	// Vista
+	var VistaElemento = Backbone.extend({
+		tagNombre: 'tr',
+		template: _.template("<%= id %>>%= part1 %> <%= part2 %>"),
+		render: function(){
+			this.$el.html(this.template(this.model.attributes));
+			return this;
+		}
+	})
+
+	var VistaLista = Backbone.View.extend({
+		el: $('table'),
+
+		events: {
+			'click button#add' : 'addItem',
+		},
+
+		initialize: function(){
+			this.collection = new Lista();
+
+			this. collection.on('add', this.appendItem, this);
+		}
+
+		addItem: function(){
+			var elemento = new Elemento({
+				id: (this.collection.lenght 1),
+			});
+
+			this.collection.add(elemento);
+		},
+
+		// Llama a la vista hija
+		appendItem: function(){
+			var vistaElemento = new VistaElemento({	model: elemento });
+
+			this.$el.append(vistaElemento.render().el);
+
+		},
+	});
+
+	var vistaLista = new VistaLista();
+</script>
+</body>
+</html>
