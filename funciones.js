@@ -14,15 +14,35 @@
 
 	// Constantes
 		Base.Constantes.Root = 'http://localhost/clien_test/';
-		Base.Constantes.File = '/hole/Silicona/Escritorio/html/clien_test/';
+		Base.Constantes.File = '/home/Silicona/Escritorio/html/clien_test/';
 
 	// Modelos
 		Base.Modelo.Cliente = Backbone.Model.extend({
 			url: function(){
 				return this.id ? 'clientes_bd.php?id=' + this.id : 'clientes_bd.php';
 			},
+
+			fileAttribute: 'attachment',
 		});
 
+
+		var Image = Backbone.Model.extend({
+
+		    readFile: function(file) {
+		        var reader = new FileReader();
+		        // closure to capture the file information.
+		        reader.onload = (function(theFile,that) {
+		            return function(e) {
+		                //set model
+		                that.set({filename: theFile.name, data: e.target.result});
+
+		            };
+		        })(file,this);
+
+		        // Read in the image file as a data URL.
+		        reader.readAsDataURL(file);
+		    }   
+		});
 	// Coleccion
 		Base.Coleccion.Cartera = Backbone.Collection.extend({
 			model: Base.Modelo.Cliente,
@@ -209,7 +229,7 @@
 
 			template: obtenerTemplate('form_crear'),
 
-			enctype: 'multipart/form-data',
+			//enctype: 'multipart/form-data',
 
 			initialize: function(){
 				//this.$el.attr('enctype', 'multipart/form-data');
@@ -228,10 +248,10 @@
 
 			events: {
 				'keypress #telefono': 'formatearTel',
-				'submit': 'enviar',
+				//'submit': 'enviar',
 				//'all': 'verConsola',
 				//'submit .ingresar': 'conForm',
-				//'submit .ingresar': 'subir',
+				'submit': 'subir',
 			},
 
 			formatearTel: function(e){
@@ -261,27 +281,35 @@
 			},
 
 			subir: function(e){
-				var valores = {};
 				if(e){ e.preventDefault(); }
+				var valores = {};
+				var archivo = $(':input[type="file"]')[0].files[0];
 
 				_.each($('form').serializeArray(), function(input){
 
-					valores[input.name] = input.value;
-				})
+					//valores[input.name] = input.value;
+					this.model.set(input.name, input.value);
+				}, this)
+
 				//var cliente = new Base.Modelo.Cliente;
-				console.log('valores: ', valores);
+				this.model.set('attachment', archivo);
+				console.log('valores: ', this.model);
+
 				//console.log('valores: ', $('form :file'));
-				// this.model.save(
+				this.model.save(
 				// 	valores, 
 
 				//  	{ iframe: true,
 				//  		files: $('form :file'),
 				//  		data: valores,
 				//  		method: 'post' });
-				// ).done(function(e){
-				// 	router.navigate("perfil/" + e.id , { trigger: true });
-				// 	$('.aviso').html('Nuevo cliente registrado');
-				// });
+				).done(function(e){
+					//router.navigate("perfil/" + e.id , { trigger: true });
+					//$('.aviso').html('Nuevo cliente registrado');
+					console.log(e);
+				});
+
+				this.model.on('progress', function(e){ console.log(e) })
 			},
 
 			conForm: function(e){
@@ -299,13 +327,145 @@
 			// 		valores, 
 
 			// 	 	{ iframe: true,
-			// 	 		files: $('form :file'),
+			// 	 		files: this.$('form :file'),
 			// 	 		data: valores,
 			// 	 		method: 'post',
 			// 	 		processData: false,
 			// 	 		contentType: false });
 
-			}
+			},
+//https://stackoverflow.com/questions/14743842/backbone-js-and-formdata
+
+
+			// events : {
+   //      "click #uploadDocument" : "showUploadDocumentDetails",
+   //      "change #documents" : "documentsSelected",
+   //      "click .cancel-document" : "cancelDocument"
+   //  },
+//     showUploadDocumentDetails : function(event) {
+//         $('#id-gen-form').attr("enctype","multipart/form-data");
+//         $('#id-gen-form').attr("action",this.model.url);
+//         var config = {
+//                 support : "image/jpg,image/png,image/bmp,image/jpeg,image/gif",     // Valid file formats
+//                 form: "id-gen-form",                    // Form ID
+//                 dragArea: "dragAndDropFiles",       // Upload Area ID
+//                 uploadUrl: this.model.url               // Server side upload url
+//             };
+
+//                 initMultiUploader(config);
+
+
+
+
+//         if($('#uploadDocument').attr("checked")){
+//             $('#id-documentCategory-div').show();
+//             $('#id-documentName-div').show();
+//             this.model.set({"uploadDocument": "YES"},{silent: true});
+//         }
+//         else{
+//             $('#id-documentCategory-div').hide();
+//             $('#id-documentName-div').hide();
+//             this.model.set({"uploadDocument": "NO"},{silent: true});
+//         }
+//     },
+//     cancelDocument : function(event) {
+//         var targ;
+//         if (!event) event = window.event;
+//         if (event.target) targ = event.target;
+//         else if (event.srcElement) targ = event.srcElement;
+//          $('#' + event.target.id).parent().parent().remove();
+//          var documentDetails = this.model.get("documentDetails");
+//          documentDetails = _.without(documentDetails, _(documentDetails).find(function(x) {return x.seqNum == event.target.id;}));
+//          this.model.set({
+//                 "documentDetails" : documentDetails
+//             }, {
+//                 silent : true
+//             });
+//     },
+//     documentsSelected : function(event) {
+//         var targ;
+//         if (!event) event = window.event;
+//         if (event.target) targ = event.target;
+//         else if (event.srcElement) targ = event.srcElement;
+//         if (targ.nodeType == 3) // defeat Safari bug
+//         targ = targ.parentNode;
+//                 var files = event.target.files; // FileList object
+
+//                 var html = [];
+//                 var documentDetails = [];
+//                 $(".files").html(html.join(''));
+//                 var _this = this;
+//                 _this.model.set({
+//                     "documentDetails" : documentDetails
+//                 }, {
+//                     silent : true
+//                 });
+//                  var seqNum = 0;
+//             for(var i=0; i< files.length; i++){
+
+//                 (function(file) {
+//                     html.push("<tr class='template-upload' style='font-size: 10px;'>");
+//                     html.push("<td class='name'><span>"+file.name+"</span></td>");
+//                     html.push("<td class='size'><span>"+file.size+" KB <br/>"+file.type+"</span></td>");
+//                     //html.push("<td><div class='progress progress-success progress-striped active'style='width: 100px;' role='progressbar' aria-valuemin='0' aria-valuemax='100' aria-valuenow='0'><div class='bar' style='width:0%;'></div></div></td>");
+//                     if(LNS.MyesqNG.isMimeTypeSupported(file.type)){
+//                         if(!LNS.MyesqNG.isFileSizeExceeded(file.size)){
+//                             html.push("<td class='error' colspan='2'></td>");
+//                             var reader = new FileReader();  
+//                             console.log(reader);
+//                                 reader.onload = function(e) { 
+//                                       var targ;
+//                                     if (!e) e = window.event;
+//                                     if (e.target) targ = e.target;
+//                                     else if (e.srcElement) targ = e.srcElement;
+//                                     if (targ.nodeType == 3) // defeat Safari bug
+//                                     targ = targ.parentNode;
+//                                     console.log(e.target.result);
+//                                       var content = e.target.result;
+//                                       var document = new Object();
+//                                       document.name = file.name;
+//                                       document.type = file.type;
+//                                       document.content = content;
+//                                       document.seqNum = "document"+seqNum;
+//                                       seqNum++;
+//                                       documentDetails.push(document);
+//                                      // _this.model.set({"documentDetails" : documentDetails},{silent:true});
+//                                   };
+//                                 reader.readAsDataURL(file, "UTF-8");
+//                         }else{
+//                              seqNum++;
+//                             html.push("<td class='error' colspan='2'><span class='label label-important'>Error</span> Too long</td>");
+//                         }
+//                 }else{
+//                      seqNum++;
+//                     html.push("<td class='error' colspan='2'><span class='label label-important'>Error</span> Not suported</td>");
+//                 }
+//                  html.push("<td><a id='document"+i+"' class='btn btn-warning btn-mini cancel-document'>Cancel</a></td>");
+//                  html.push("</tr>");
+//                 })(files[i]);
+//             }
+//             $(".files").html(html.join(''));
+
+//       }
+
+
+// LNS.MyesqNG.isMimeTypeSupported = function(mimeType){
+//     var mimeTypes = ['text/plain','application/zip','application/x-rar-compressed','application/pdf'];
+//     if($.inArray(mimeType.toLowerCase(), mimeTypes) == -1) {
+//         return false;
+//     }else{
+//         return true;
+//     }
+// };
+
+// LNS.MyesqNG.isFileSizeExceeded = function(fileSize) {
+//     var size = 2000000000000000000000000000;
+//     if(Number(fileSize) > Number(size)){
+//         return true;
+//     }else{
+//         return false;
+//     }
+// };
 		});
 
 		Base.Vista.Form = Backbone.View.extend({
