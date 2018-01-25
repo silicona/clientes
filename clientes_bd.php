@@ -53,7 +53,7 @@ error_reporting(E_ALL);
 		//$consulta = "INSERT INTO clientes (nombre, direccion, telefono, email, imagen, comentarios) VALUES (:nombre, :direccion, :telefono, :email, :imagen, :comentarios)";
 		$consulta = "INSERT INTO clientes (nombre, direccion, telefono, prefijo, imagen, email, comentarios) VALUES (:nombre, :direccion, :telefono, :prefijo, :imagen, :email, :comentarios)";
 		$peticion = $base->prepare($consulta);
-		$obj = $datos->attachment;
+		//$obj = $datos->attachment;
 		//$datos = json_decode(file_get_contents('php://input'));
 		//$datos = (file_get_contents('php://input'));
 
@@ -71,7 +71,7 @@ error_reporting(E_ALL);
 
 		// echo json_encode($resultado);
 
-		echo json_encode($obj);
+		echo json_encode($datos);
 		//echo gettype($datos);
 		//var_dump($datos);
 		//echo implode(', ',array_keys($datos);

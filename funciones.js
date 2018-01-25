@@ -285,6 +285,7 @@
 				var valores = {};
 				var archivo = $(':input[type="file"]')[0].files[0];
 
+				var formData = new FormData()
 				_.each($('form').serializeArray(), function(input){
 
 					//valores[input.name] = input.value;
@@ -295,6 +296,16 @@
 				this.model.set('attachment', archivo);
 				console.log('valores: ', this.model);
 
+				_.each(this.model.attributes, function(nom, val){
+					formData.append(nom, val);
+				});
+
+				// _.defaults(),{
+				// 	data: formData,
+				// 	processData: false,
+				// 	contentType: false,
+				// }
+
 				//console.log('valores: ', $('form :file'));
 				this.model.save(
 				// 	valores, 
@@ -303,6 +314,14 @@
 				//  		files: $('form :file'),
 				//  		data: valores,
 				//  		method: 'post' });
+					//null,
+						formData,
+					{ 
+						data: formData,
+						processData: false,
+						contentType: false,
+						method: 'post',
+					}
 				).done(function(e){
 					//router.navigate("perfil/" + e.id , { trigger: true });
 					//$('.aviso').html('Nuevo cliente registrado');
@@ -334,6 +353,8 @@
 			// 	 		contentType: false });
 
 			},
+
+
 //https://stackoverflow.com/questions/14743842/backbone-js-and-formdata
 
 
@@ -467,6 +488,8 @@
 //     }
 // };
 		});
+
+	//ase.vista.Preview
 
 		Base.Vista.Form = Backbone.View.extend({
 			tagName: 'div',
