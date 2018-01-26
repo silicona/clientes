@@ -43,6 +43,7 @@
 		        reader.readAsDataURL(file);
 		    }   
 		});
+
 	// Coleccion
 		Base.Coleccion.Cartera = Backbone.Collection.extend({
 			model: Base.Modelo.Cliente,
@@ -248,9 +249,8 @@
 
 			events: {
 				'keypress #telefono': 'formatearTel',
+				'change .imagen': 'verImagen',
 				//'submit': 'enviar',
-				//'all': 'verConsola',
-				//'submit .ingresar': 'conForm',
 				'submit': 'subir',
 			},
 
@@ -259,6 +259,32 @@
 				permitida = perm.find(function(el){	if(el == e.charCode){ return true } else { false } });
 
 				if(!permitida){ alert('Caracter no permitodo'); return false }
+			},
+
+			verImagen: function(e){
+
+				var imag = new Base.Vista.Preview({ el: $(e.target).parent()});
+				//console.log(e.target.files);
+				archivos = e.target.files;
+				for (var i = 0, f; f = archivos[i]; i++) {
+        //Solo admitimos imágenes.
+        if (!f.type.match('image.*')) {
+          continue;
+        }
+        
+        var reader = new FileReader();
+        
+        reader.onload = (function(theFile) {
+          return function(e) {
+              // Insertamos la imagen
+              //document.getElementById("list").innerHTML = ['<img class="thumb" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join('');
+							imag.render(e.target.result);
+            };
+          })(f);
+          
+          reader.readAsDataURL(f);
+        }
+      
 			},
 
 			enviar: function(e){
@@ -342,154 +368,162 @@
 
 				formData.append('imagen', $('#imagen').files[0]);
 				console.log('form:', formData);
-			// 	this.model.save(
-			// 		valores, 
+				// 	this.model.save(
+				// 		valores, 
 
-			// 	 	{ iframe: true,
-			// 	 		files: this.$('form :file'),
-			// 	 		data: valores,
-			// 	 		method: 'post',
-			// 	 		processData: false,
-			// 	 		contentType: false });
+				// 	 	{ iframe: true,
+				// 	 		files: this.$('form :file'),
+				// 	 		data: valores,
+				// 	 		method: 'post',
+				// 	 		processData: false,
+				// 	 		contentType: false });
 
 			},
 
 
-//https://stackoverflow.com/questions/14743842/backbone-js-and-formdata
+			//https://stackoverflow.com/questions/14743842/backbone-js-and-formdata
 
 
-			// events : {
-   //      "click #uploadDocument" : "showUploadDocumentDetails",
-   //      "change #documents" : "documentsSelected",
-   //      "click .cancel-document" : "cancelDocument"
-   //  },
-//     showUploadDocumentDetails : function(event) {
-//         $('#id-gen-form').attr("enctype","multipart/form-data");
-//         $('#id-gen-form').attr("action",this.model.url);
-//         var config = {
-//                 support : "image/jpg,image/png,image/bmp,image/jpeg,image/gif",     // Valid file formats
-//                 form: "id-gen-form",                    // Form ID
-//                 dragArea: "dragAndDropFiles",       // Upload Area ID
-//                 uploadUrl: this.model.url               // Server side upload url
-//             };
+				// events : {
+			  //      "click #uploadDocument" : "showUploadDocumentDetails",
+			  //      "change #documents" : "documentsSelected",
+			  //      "click .cancel-document" : "cancelDocument"
+			  //  },
+				//     showUploadDocumentDetails : function(event) {
+				//         $('#id-gen-form').attr("enctype","multipart/form-data");
+				//         $('#id-gen-form').attr("action",this.model.url);
+				//         var config = {
+				//                 support : "image/jpg,image/png,image/bmp,image/jpeg,image/gif",     // Valid file formats
+				//                 form: "id-gen-form",                    // Form ID
+				//                 dragArea: "dragAndDropFiles",       // Upload Area ID
+				//                 uploadUrl: this.model.url               // Server side upload url
+				//             };
 
-//                 initMultiUploader(config);
-
-
+				//                 initMultiUploader(config);
 
 
-//         if($('#uploadDocument').attr("checked")){
-//             $('#id-documentCategory-div').show();
-//             $('#id-documentName-div').show();
-//             this.model.set({"uploadDocument": "YES"},{silent: true});
-//         }
-//         else{
-//             $('#id-documentCategory-div').hide();
-//             $('#id-documentName-div').hide();
-//             this.model.set({"uploadDocument": "NO"},{silent: true});
-//         }
-//     },
-//     cancelDocument : function(event) {
-//         var targ;
-//         if (!event) event = window.event;
-//         if (event.target) targ = event.target;
-//         else if (event.srcElement) targ = event.srcElement;
-//          $('#' + event.target.id).parent().parent().remove();
-//          var documentDetails = this.model.get("documentDetails");
-//          documentDetails = _.without(documentDetails, _(documentDetails).find(function(x) {return x.seqNum == event.target.id;}));
-//          this.model.set({
-//                 "documentDetails" : documentDetails
-//             }, {
-//                 silent : true
-//             });
-//     },
-//     documentsSelected : function(event) {
-//         var targ;
-//         if (!event) event = window.event;
-//         if (event.target) targ = event.target;
-//         else if (event.srcElement) targ = event.srcElement;
-//         if (targ.nodeType == 3) // defeat Safari bug
-//         targ = targ.parentNode;
-//                 var files = event.target.files; // FileList object
-
-//                 var html = [];
-//                 var documentDetails = [];
-//                 $(".files").html(html.join(''));
-//                 var _this = this;
-//                 _this.model.set({
-//                     "documentDetails" : documentDetails
-//                 }, {
-//                     silent : true
-//                 });
-//                  var seqNum = 0;
-//             for(var i=0; i< files.length; i++){
-
-//                 (function(file) {
-//                     html.push("<tr class='template-upload' style='font-size: 10px;'>");
-//                     html.push("<td class='name'><span>"+file.name+"</span></td>");
-//                     html.push("<td class='size'><span>"+file.size+" KB <br/>"+file.type+"</span></td>");
-//                     //html.push("<td><div class='progress progress-success progress-striped active'style='width: 100px;' role='progressbar' aria-valuemin='0' aria-valuemax='100' aria-valuenow='0'><div class='bar' style='width:0%;'></div></div></td>");
-//                     if(LNS.MyesqNG.isMimeTypeSupported(file.type)){
-//                         if(!LNS.MyesqNG.isFileSizeExceeded(file.size)){
-//                             html.push("<td class='error' colspan='2'></td>");
-//                             var reader = new FileReader();  
-//                             console.log(reader);
-//                                 reader.onload = function(e) { 
-//                                       var targ;
-//                                     if (!e) e = window.event;
-//                                     if (e.target) targ = e.target;
-//                                     else if (e.srcElement) targ = e.srcElement;
-//                                     if (targ.nodeType == 3) // defeat Safari bug
-//                                     targ = targ.parentNode;
-//                                     console.log(e.target.result);
-//                                       var content = e.target.result;
-//                                       var document = new Object();
-//                                       document.name = file.name;
-//                                       document.type = file.type;
-//                                       document.content = content;
-//                                       document.seqNum = "document"+seqNum;
-//                                       seqNum++;
-//                                       documentDetails.push(document);
-//                                      // _this.model.set({"documentDetails" : documentDetails},{silent:true});
-//                                   };
-//                                 reader.readAsDataURL(file, "UTF-8");
-//                         }else{
-//                              seqNum++;
-//                             html.push("<td class='error' colspan='2'><span class='label label-important'>Error</span> Too long</td>");
-//                         }
-//                 }else{
-//                      seqNum++;
-//                     html.push("<td class='error' colspan='2'><span class='label label-important'>Error</span> Not suported</td>");
-//                 }
-//                  html.push("<td><a id='document"+i+"' class='btn btn-warning btn-mini cancel-document'>Cancel</a></td>");
-//                  html.push("</tr>");
-//                 })(files[i]);
-//             }
-//             $(".files").html(html.join(''));
-
-//       }
 
 
-// LNS.MyesqNG.isMimeTypeSupported = function(mimeType){
-//     var mimeTypes = ['text/plain','application/zip','application/x-rar-compressed','application/pdf'];
-//     if($.inArray(mimeType.toLowerCase(), mimeTypes) == -1) {
-//         return false;
-//     }else{
-//         return true;
-//     }
-// };
+				//         if($('#uploadDocument').attr("checked")){
+				//             $('#id-documentCategory-div').show();
+				//             $('#id-documentName-div').show();
+				//             this.model.set({"uploadDocument": "YES"},{silent: true});
+				//         }
+				//         else{
+				//             $('#id-documentCategory-div').hide();
+				//             $('#id-documentName-div').hide();
+				//             this.model.set({"uploadDocument": "NO"},{silent: true});
+				//         }
+				//     },
+				//     cancelDocument : function(event) {
+				//         var targ;
+				//         if (!event) event = window.event;
+				//         if (event.target) targ = event.target;
+				//         else if (event.srcElement) targ = event.srcElement;
+				//          $('#' + event.target.id).parent().parent().remove();
+				//          var documentDetails = this.model.get("documentDetails");
+				//          documentDetails = _.without(documentDetails, _(documentDetails).find(function(x) {return x.seqNum == event.target.id;}));
+				//          this.model.set({
+				//                 "documentDetails" : documentDetails
+				//             }, {
+				//                 silent : true
+				//             });
+				//     },
+				//     documentsSelected : function(event) {
+				//         var targ;
+				//         if (!event) event = window.event;
+				//         if (event.target) targ = event.target;
+				//         else if (event.srcElement) targ = event.srcElement;
+				//         if (targ.nodeType == 3) // defeat Safari bug
+				//         targ = targ.parentNode;
+				//                 var files = event.target.files; // FileList object
 
-// LNS.MyesqNG.isFileSizeExceeded = function(fileSize) {
-//     var size = 2000000000000000000000000000;
-//     if(Number(fileSize) > Number(size)){
-//         return true;
-//     }else{
-//         return false;
-//     }
-// };
+				//                 var html = [];
+				//                 var documentDetails = [];
+				//                 $(".files").html(html.join(''));
+				//                 var _this = this;
+				//                 _this.model.set({
+				//                     "documentDetails" : documentDetails
+				//                 }, {
+				//                     silent : true
+				//                 });
+				//                  var seqNum = 0;
+				//             for(var i=0; i< files.length; i++){
+
+				//                 (function(file) {
+				//                     html.push("<tr class='template-upload' style='font-size: 10px;'>");
+				//                     html.push("<td class='name'><span>"+file.name+"</span></td>");
+				//                     html.push("<td class='size'><span>"+file.size+" KB <br/>"+file.type+"</span></td>");
+				//                     //html.push("<td><div class='progress progress-success progress-striped active'style='width: 100px;' role='progressbar' aria-valuemin='0' aria-valuemax='100' aria-valuenow='0'><div class='bar' style='width:0%;'></div></div></td>");
+				//                     if(LNS.MyesqNG.isMimeTypeSupported(file.type)){
+				//                         if(!LNS.MyesqNG.isFileSizeExceeded(file.size)){
+				//                             html.push("<td class='error' colspan='2'></td>");
+				//                             var reader = new FileReader();  
+				//                             console.log(reader);
+				//                                 reader.onload = function(e) { 
+				//                                       var targ;
+				//                                     if (!e) e = window.event;
+				//                                     if (e.target) targ = e.target;
+				//                                     else if (e.srcElement) targ = e.srcElement;
+				//                                     if (targ.nodeType == 3) // defeat Safari bug
+				//                                     targ = targ.parentNode;
+				//                                     console.log(e.target.result);
+				//                                       var content = e.target.result;
+				//                                       var document = new Object();
+				//                                       document.name = file.name;
+				//                                       document.type = file.type;
+				//                                       document.content = content;
+				//                                       document.seqNum = "document"+seqNum;
+				//                                       seqNum++;
+				//                                       documentDetails.push(document);
+				//                                      // _this.model.set({"documentDetails" : documentDetails},{silent:true});
+				//                                   };
+				//                                 reader.readAsDataURL(file, "UTF-8");
+				//                         }else{
+				//                              seqNum++;
+				//                             html.push("<td class='error' colspan='2'><span class='label label-important'>Error</span> Too long</td>");
+				//                         }
+				//                 }else{
+				//                      seqNum++;
+				//                     html.push("<td class='error' colspan='2'><span class='label label-important'>Error</span> Not suported</td>");
+				//                 }
+				//                  html.push("<td><a id='document"+i+"' class='btn btn-warning btn-mini cancel-document'>Cancel</a></td>");
+				//                  html.push("</tr>");
+				//                 })(files[i]);
+				//             }
+				//             $(".files").html(html.join(''));
+
+				//       }
+
+
+				// LNS.MyesqNG.isMimeTypeSupported = function(mimeType){
+				//     var mimeTypes = ['text/plain','application/zip','application/x-rar-compressed','application/pdf'];
+				//     if($.inArray(mimeType.toLowerCase(), mimeTypes) == -1) {
+				//         return false;
+				//     }else{
+				//         return true;
+				//     }
+				// };
+
+				// LNS.MyesqNG.isFileSizeExceeded = function(fileSize) {
+				//     var size = 2000000000000000000000000000;
+				//     if(Number(fileSize) > Number(size)){
+				//         return true;
+				//     }else{
+				//         return false;
+				//     }
+				// };
 		});
 
-	//ase.vista.Preview
+	  Base.Vista.Preview = Backbone.View.extend({
+	  	tagName: 'img',
+
+	  	//el: '.imag',
+
+	  	render: function(src){
+	  		this.$el.append('<img src="' + src + '" alt="Defecto" title="Previsualizacion">');
+	  	}
+	  });
 
 		Base.Vista.Form = Backbone.View.extend({
 			tagName: 'div',
@@ -539,7 +573,7 @@
 		var oido = {};
 		oido = _.extend(oido, Backbone.Events);
 		oido.bind('submit', 'verEventos');
-		console.log('oido: ', oido);
+		//console.log('oido: ', oido);
 
 		function hacerRango(start, edge, step) {
 		  // If only one number was passed in make it the edge and 0 the start.

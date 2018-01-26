@@ -11,7 +11,9 @@ error_reporting(E_ALL);
 		return $dato;
 	}
 
-	$base = new PDO("mysql:host=localhost;dbname=clientes", 'usuario', 'pass');
+//	$base = new PDO("mysql:host=localhost;dbname=clientes", 'usuario', 'pass');
+	$base = new PDO("mysql:host=localhost;dbname=clientes_backbone", 'usuario', 'pass');
+
 	$datos = json_decode(file_get_contents('php://input'));
 	//$datos = file('PHP://input');
 	//$datos = json_encode(file('PHP://input'));
