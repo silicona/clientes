@@ -102,6 +102,55 @@ body {
 					.form {
 						width: 80%;
 						margin: 1em auto;
+
+						.col-imagen {
+							text-align: center;
+							label {
+								display: block;
+								text-align: left;
+							}
+
+							.boton-imagen {
+								font-size: 1.25rem;
+								font-weight: 400;
+								text-overflow: ellipsis;
+								white-space: nowrap;
+								overflow: hidden;
+								
+								cursor: pointer;
+								display: inline-block;
+
+								margin: 10px 0;
+								padding: 0.625rem 1.25rem;
+								border: rgb(206, 206, 206) outset 3px;
+								border-radius: 5px;
+
+								color: #444444;
+								background-color: #dddddd;
+							}
+
+							.input-imagen {
+								width: 0.1px;
+								height: 0.1px;
+								opacity: 0;
+								overflow: hidden;
+								position: absolute;
+								z-index: -1;
+							}
+						}
+
+						.col-imagen-cliente {
+							padding: 20px;
+							text-align: center;
+
+							.foto {
+								padding: 20px;
+								height: 150px;
+								min-width: 150px;
+								border: 2px dashed #ddd;
+							}
+						}
+
 					}
 				}
 			}

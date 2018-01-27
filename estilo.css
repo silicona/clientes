@@ -58,6 +58,40 @@ body {
   body main .container .centro .pizarra .form {
     width: 80%;
     margin: 1em auto; }
+    body main .container .centro .pizarra .form .col-imagen {
+      text-align: center; }
+      body main .container .centro .pizarra .form .col-imagen label {
+        display: block;
+        text-align: left; }
+      body main .container .centro .pizarra .form .col-imagen .boton-imagen {
+        font-size: 1.25rem;
+        font-weight: 400;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        cursor: pointer;
+        display: inline-block;
+        margin: 10px 0;
+        padding: 0.625rem 1.25rem;
+        border: #cecece outset 3px;
+        border-radius: 5px;
+        color: #444444;
+        background-color: #dddddd; }
+      body main .container .centro .pizarra .form .col-imagen .input-imagen {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1; }
+    body main .container .centro .pizarra .form .col-imagen-cliente {
+      padding: 20px;
+      text-align: center; }
+      body main .container .centro .pizarra .form .col-imagen-cliente .foto {
+        padding: 20px;
+        height: 150px;
+        min-width: 150px;
+        border: 2px dashed #ddd; }
   body aside {
     background-color: #eee;
     text-align: center; }
