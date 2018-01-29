@@ -6,9 +6,15 @@
 	define('BASE_URL', 'localhost/clien_test');
 	define('BASE_FILES', '/var/www/html/clien_test/');
 
+<<<<<<< HEAD
+//	$base = new PDO("mysql:host=localhost;dbname=clientes", 'usuario', 'pass');
+	$base = new PDO("mysql:host=localhost;dbname=clientes_backbone", 'usuario', 'pass');
+
+=======
 	$base = new PDO("mysql:host=localhost;dbname=clientes", 'usuario', 'pass');
 
 	// Fuente de datos procesados por Backbone
+>>>>>>> d41f77b2dfd365071b64f769b2bf4574caf96d4f
 	$datos = json_decode(file_get_contents('php://input'));
 
 
