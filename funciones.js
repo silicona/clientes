@@ -13,8 +13,9 @@
 	};
 
 	// Constantes
-		Base.Constantes.Root = 'http://localhost/clien_test/';
-		Base.Constantes.File = '/home/Silicona/Escritorio/html/clien_test/';
+		Base.Root = 'http://localhost/clien_test/';
+		Base.File = '/home/Silicona/Escritorio/html/clien_test/';
+		Base.Subidas = 'subidas/';
 
 	// Modelos
 		Base.Modelo.Cliente = Backbone.Model.extend({
@@ -22,7 +23,19 @@
 				return this.id ? 'clientes_bd.php?id=' + this.id : 'clientes_bd.php';
 			},
 
-			fileAttribute: 'attachment',
+			defaults: {
+				nombre: '',
+				direccion: '',
+				telefono: '',
+				prefijo: '34',
+				tel_tipo: 'movil',
+				email: '',
+				imagen: 'avatar.jpg',
+				comentarios: 'Sin comentarios'
+			},
+
+			//fileAttribute: 'imagen_archivo',
+			fileAttribute: 'imagen_archivo',
 		});
 
 
@@ -224,41 +237,82 @@
 		});
 
 		Base.Vista.CrearCliente = Backbone.View.extend({
+			
 			tagName: 'form',
 
 			className: 'form ingresar',
 
 			template: obtenerTemplate('form_crear'),
 
-			//enctype: 'multipart/form-data',
 
-			initialize: function(){
-				//this.$el.attr('enctype', 'multipart/form-data');
-				//this.$el.attr('data-remote', 'true');
-				//this.$el.attr('method', 'post');
+			initialize: function(e){
+
+				this.model.on('change', this.render, this);
+
+				//this.model.on('change:cid', this.render, this);
+
 			},
 
-			render: function(){
+
+			render: function(e){
+
 				var datos = { 
 					titulo: this.titulo,
-					boton: this.boton 
+					boton: this.boton,
 				};
+
+				datos = Object.assign(datos, this.model.toJSON());
+				
+				//console.log('datos: ', datos);
 
 				$('.pizarra').html(this.$el.html(this.template(datos)));
 			},
 
+
 			events: {
 				'keypress #telefono': 'formatearTel',
+<<<<<<< HEAD
 				'change .imagen': 'verImagen',
 				//'submit': 'enviar',
 				'submit': 'subir',
+=======
+				'change .input-imagen': 'verPreimagen',
+				'click .boton_formulario': 'subir',
+				//'submit': 'enviar',
+				//'all': 'verConsola',
+				//'submit .ingresar': 'conForm',
+				//'submit': 'subir',
+				//'click .boton_formulario': 'envioConAjax'
+>>>>>>> d41f77b2dfd365071b64f769b2bf4574caf96d4f
 			},
 
 			formatearTel: function(e){
+
 				perm = hacerRango(45, 58); // con e.charCode
 				permitida = perm.find(function(el){	if(el == e.charCode){ return true } else { false } });
 
 				if(!permitida){ alert('Caracter no permitodo'); return false }
+
+			},
+
+			verPreimagen: function(e){
+				var archivo = e.target.files[0];
+				var tipo = /image.*/;
+
+				if(!archivo.type.match(tipo)) { return }
+
+				var lector = new FileReader();
+
+				lector.onload = function(evento){
+
+					var archivo = evento.target.result;
+
+					$('.foto', '.form').attr('src', archivo);
+
+				}
+
+				lector.readAsDataURL(archivo);
+
 			},
 
 			verImagen: function(e){
@@ -298,7 +352,7 @@
 
 				cliente.save({
 				}).done(function(e){
-					router.navigate("perfil/" + e.id , { trigger: true });
+					router.navigate("#perfil/" + e.id , { trigger: true });
 					$('.aviso').html('Nuevo cliente registrado');
 				}).fail(function(e){
 					router.navigate("clientes", { trigger: true });
@@ -307,56 +361,38 @@
 			},
 
 			subir: function(e){
-				if(e){ e.preventDefault(); }
-				var valores = {};
-				var archivo = $(':input[type="file"]')[0].files[0];
+				if(e){ e.preventDefault(); e.stopPropagation() }
 
-				var formData = new FormData()
-				_.each($('form').serializeArray(), function(input){
+				var formData = new FormData(this.el);
+				console.log('esto: ', formData);
 
-					//valores[input.name] = input.value;
-					this.model.set(input.name, input.value);
-				}, this)
-
-				//var cliente = new Base.Modelo.Cliente;
-				this.model.set('attachment', archivo);
-				console.log('valores: ', this.model);
-
-				_.each(this.model.attributes, function(nom, val){
-					formData.append(nom, val);
-				});
-
-				// _.defaults(),{
-				// 	data: formData,
-				// 	processData: false,
-				// 	contentType: false,
-				// }
-
-				//console.log('valores: ', $('form :file'));
 				this.model.save(
-				// 	valores, 
-
-				//  	{ iframe: true,
-				//  		files: $('form :file'),
-				//  		data: valores,
-				//  		method: 'post' });
-					//null,
-						formData,
+				 	//null,
+				 	formData,
 					{ 
-						data: formData,
-						processData: false,
-						contentType: false,
-						method: 'post',
-					}
+				 		//files: $('form :file'),
+						cache: false,
+				 		data: formData,
+				 		processData: false,
+				 		//processData: true,
+				 		contentType: false,
+						//method: 'post',
+						error: function(a, b, c){
+							console.log('Error: ',c);
+						},
+				 	},
+
 				).done(function(e){
-					//router.navigate("perfil/" + e.id , { trigger: true });
-					//$('.aviso').html('Nuevo cliente registrado');
-					console.log(e);
+					router.navigate("" , { trigger: true });
+				  //router.navigate("#perfil/" + e.id , { trigger: true });
+					$('.aviso').html('Nuevo cliente registrado');
+				 	console.log('Conseguido: ', e);
 				});
 
-				this.model.on('progress', function(e){ console.log(e) })
+				
 			},
 
+<<<<<<< HEAD
 			conForm: function(e){
 				if(e){ e.preventDefault(); e.stopPropagation()}
 
@@ -529,43 +565,30 @@
 			tagName: 'div',
 
 			className: 'form',
+=======
+>>>>>>> d41f77b2dfd365071b64f769b2bf4574caf96d4f
 
-			template: obtenerTemplate('form'),
+			envioConAjax: function(){
+				var formData = new FormData(this.el);
+				console.log('esto: ', formData);
+		    $.ajax({
+		        url: 'clientes_bd.php',
+		        //url: window.location.pathname,
+		        type: 'POST',
+		        data: formData,
+		        success: function (data) {
+		            alert(data)
+		        },
+		        cache: false,
+		        contentType: false,
+		        processData: false
+		    });
 
-			render: function(){
-				var contenido = { modelo: this.model.toJSON(), boton: this.boton };
-				$('.pizarra').html(this.$el.html(this.template(contenido)));
 			},
 
-			events: {
-				'submit': 'envioAjax',
-			},
-
-			envioAjax: function(e){
-				e.preventDefault();
-				var form = e.target;
-
-				for(x=0; x<form.length;x++){
-				 	if(form[x].name == 'boton'){ continue };
-					this.model.set(form[x].name, form[x].value)
-				}
-				console.log('Modelo saliendo: ', this.model);
-				this.model.save().done(function(res){
-					console.log('vuelta: ', res.id);
-					router.navigate("perfil/" + res.id, { trigger: true });
-					$('.aviso').html('Perfil actualizado');
-				});
-			},
-
-			envioUpdate: function(e){
-				e.preventDefault();
-			},
-
-			initialize: function(nuevo){
-				this.model.on('change', this.render, this)
-			}
 		});
 
+<<<<<<< HEAD
 	// Auxiliares
 		var verEventos = function(evento){
 			console.log('Evento: ', evento)
@@ -659,6 +682,8 @@
 		// var envioAjax = function(e){
 		// 	e.preventDefault();
 		// }
+=======
+>>>>>>> d41f77b2dfd365071b64f769b2bf4574caf96d4f
 
 	// router
 		Base.Router = Backbone.Router.extend({
@@ -668,6 +693,65 @@
 				'editar/:id' : 'editar',
 				'clientes' : 'verTodos',
 				'perfil/:id' : 'verPerfil',
+			},
+
+			index: function(){
+
+				this.limpiar('pizarra', 'aviso');
+
+				inicio = new Base.Coleccion.Cartera();
+				inicio.fetch();
+				var vista = new Base.Vista.Inicio({ collection: inicio });
+
+				$('.pizarra').append(vista.el);
+
+			},
+
+			insertar: function(){
+
+				this.limpiar('aviso');
+
+				var cliente = new Base.Modelo.Cliente();
+				var vista_formulario = new Base.Vista.CrearCliente({ model: cliente });
+				//console.log(cliente);
+
+				vista_formulario.titulo = 'Registrar cliente';
+				vista_formulario.boton = 'Registrar';
+				vista_formulario.render();
+
+			},
+
+			editar: function(id){
+				
+				this.limpiar('aviso');
+				
+				var cliente = new Base.Modelo.Cliente({ id: id });
+				var vista_form = new Base.Vista.CrearCliente({ model: cliente });
+				//var vista_form = new Base.Vista.Form({ model: cliente });
+
+				vista_form.titulo = 'Editar cliente';
+				vista_form.boton = 'Actualizar';
+				cliente.fetch();
+
+				//console.log(cliente.attributes);
+				//vista_form.render();
+			},
+
+			verTodos: function(){
+				this.limpiar('pizarra', 'aviso');
+				conjunto = new Base.Coleccion.Cartera;
+				var vista = new Base.Vista.Cartera({ collection: conjunto });
+				conjunto.fetch();
+				$('.pizarra').append(vista.el);		
+			},
+
+			verPerfil: function(id){
+
+				perfil = new Base.Modelo.Cliente;
+				perfil.id = id;
+				var visa = new Base.Vista.Perfil({ model: perfil });
+				perfil.fetch();
+
 			},
 
 			limpiar: function(zona){
@@ -682,47 +766,35 @@
 					}
 				}
 			},
-
-			index: function(){
-				this.limpiar('pizarra', 'aviso');
-				inicio = new Base.Coleccion.Cartera();
-				inicio.fetch();
-				var vista = new Base.Vista.Inicio({ collection: inicio });
-				$('.pizarra').append(vista.el);
-			},
-
-			insertar: function(){
-				this.limpiar('aviso');
-				var cliente = new Base.Modelo.Cliente;
-				var vista_formulario = new Base.Vista.CrearCliente({ model: cliente });
-				vista_formulario.titulo = 'Registrar cliente';
-				vista_formulario.boton = 'Registrar';
-				vista_formulario.render();
-			},
-
-			editar: function(id){
-				this.limpiar('aviso');
-				var cliente = new Base.Modelo.Cliente({ id: id });
-				var vista_formulario = new Base.Vista.Form({ model: cliente });
-				vista_formulario.boton = 'Actualizar';
-				cliente.fetch();
-			},
-
-			verTodos: function(){
-				this.limpiar('pizarra', 'aviso');
-				conjunto = new Base.Coleccion.Cartera;
-				var vista = new Base.Vista.Cartera({ collection: conjunto });
-				conjunto.fetch();
-				$('.pizarra').append(vista.el);		
-			},
-
-			verPerfil: function(id){
-				perfil = new Base.Modelo.Cliente;
-				perfil.id = id;
-				var visa = new Base.Vista.Perfil({ model: perfil });
-				perfil.fetch();
-			},
 		});
+
+	// Auxiliares
+		var verEventos = function(evento){
+			console.log('Evento: ', evento)
+		}
+		var oido = {};
+		oido = _.extend(oido, Backbone.Events);
+		oido.bind('submit', 'verEventos');
+		//console.log('oido: ', oido);
+
+		function hacerRango(start, edge, step) {
+		  // If only one number was passed in make it the edge and 0 the start.
+		  if (arguments.length == 1) {
+		    edge = start;
+		    start = 0;
+		  }
+ 
+		  // Validate the edge and step numbers.
+		  edge = edge || 0;
+		  step = step || 1;
+		 
+		  // Create the array of numbers, stopping befor the edge.
+		  for (var ret = []; (edge - start) * step > 0; start += step) {
+		    ret.push(start);
+		  }
+		  return ret;
+		}
+
 
 	$(document).ready(function(){
 

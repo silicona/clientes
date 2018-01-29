@@ -1,0 +1,55 @@
+/*
+Error: Invalid CSS after "center": expected expression (e.g. 1px, bold), was ";"
+        on line 2 of test.css
+
+1: #nuevo {
+2: 	text-align: center;
+3: }
+4: 
+5: #nuevo .hijo p {
+6: 	color: #000000;
+7: }
+
+Backtrace:
+test.css:2
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/scss/parser.rb:1278:in `expected'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/script/lexer.rb:231:in `expected!'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/script/parser.rb:761:in `assert_done'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/script/parser.rb:69:in `parse'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/script/parser.rb:228:in `parse'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/script.rb:27:in `parse'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:1177:in `parse_script'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:749:in `parse_property'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:708:in `parse_property_or_rule'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:667:in `parse_line'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:540:in `build_tree'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:559:in `block in append_children'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:558:in `each'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:558:in `append_children'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:549:in `block in build_tree'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:542:in `each'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:542:in `build_tree'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:559:in `block in append_children'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:558:in `each'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:558:in `append_children'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:417:in `_to_tree'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:389:in `_render_with_sourcemap'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/engine.rb:307:in `render_with_sourcemap'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/plugin/compiler.rb:462:in `update_stylesheet'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/plugin/compiler.rb:215:in `block in update_stylesheets'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/plugin/compiler.rb:209:in `each'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/plugin/compiler.rb:209:in `update_stylesheets'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/plugin/compiler.rb:294:in `watch'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/plugin.rb:109:in `method_missing'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/exec/sass_scss.rb:360:in `watch_or_update'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/exec/sass_scss.rb:51:in `process_result'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/exec/base.rb:52:in `parse'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/lib/sass/exec/base.rb:19:in `parse!'
+/usr/local/rvm/gems/ruby-2.3.3/gems/sass-3.5.1/bin/sass:13:in `<top (required)>'
+/usr/local/rvm/gems/ruby-2.3.3/bin/sass:22:in `load'
+/usr/local/rvm/gems/ruby-2.3.3/bin/sass:22:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Error: Invalid CSS after \"center\": expected expression (e.g. 1px, bold), was \";\"\A         on line 2 of test.css\A \A 1: #nuevo {\A 2: 	text-align: center;\A 3: }\A 4: \A 5: #nuevo .hijo p {\A 6: 	color: #000000;\A 7: }"; }
