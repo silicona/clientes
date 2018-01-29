@@ -178,7 +178,8 @@
 
 			</label>
 
-			<input type="file" name="imagen" class="input-imagen" id="imagen">
+			<input type="file" name="imagen_archivo" class="input-imagen" id="imagen">
+			<input type="hidden" name="imagen" value="<%= imagen %>">
 
 		</div>
 
@@ -203,11 +204,14 @@
 
 		<input type="button" value="<%- boton %>" name="boton" class='boton_formulario'>
 
+		<span class="mensaje_error"></span>
+
 	</div>
 
 </script>
 
 
+<!-- 
 <script type="text/template" id="form">
 	<form action="" method="">
 		<table>
@@ -238,6 +242,7 @@
 
 	</form>
 </script>
+-->
 
 
 

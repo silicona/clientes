@@ -36,26 +36,19 @@
 
 			//fileAttribute: 'imagen_archivo',
 			fileAttribute: 'imagen_archivo',
+
+			validate: function(atrs){
+
+				//console.dir('validando: ',atrs);
+
+				if(atrs.nombre == ''){
+					return 'El nombre no puede estar en blanco';
+				}
+
+		  }
+
 		});
 
-
-		var Image = Backbone.Model.extend({
-
-		    readFile: function(file) {
-		        var reader = new FileReader();
-		        // closure to capture the file information.
-		        reader.onload = (function(theFile,that) {
-		            return function(e) {
-		                //set model
-		                that.set({filename: theFile.name, data: e.target.result});
-
-		            };
-		        })(file,this);
-
-		        // Read in the image file as a data URL.
-		        reader.readAsDataURL(file);
-		    }   
-		});
 
 	// Coleccion
 		Base.Coleccion.Cartera = Backbone.Collection.extend({
@@ -110,7 +103,14 @@
 			},
 
 			editar: function(){
-				router.navigate('#editar/' + this.model.id, { trigger: true });
+				//router.navigate('#editar/' + this.model.id, { trigger: true });
+				var vista_form = new Base.Vista.CrearCliente({ model: this.model });
+				//var vista_form = new Base.Vista.Form({ model: cliente });
+
+				vista_form.titulo = 'Editar cliente';
+				vista_form.boton = 'Actualizar';	
+				vista_form.render();		
+
 			},
 
 			borrar: function(){
@@ -247,9 +247,9 @@
 
 			initialize: function(e){
 
-				this.model.on('change', this.render, this);
+				//this.model.on('change', this.render, this);
 
-				//this.model.on('change:cid', this.render, this);
+				this.model.on('change:cid', this.render, this);
 
 			},
 
@@ -290,8 +290,12 @@
 			},
 
 			verPreimagen: function(e){
+
 				var archivo = e.target.files[0];
+
 				var tipo = /image.*/;
+
+				var nombre_imagen = archivo.name;
 
 				if(!archivo.type.match(tipo)) { return }
 
@@ -303,6 +307,8 @@
 
 					$('.foto', '.form').attr('src', archivo);
 
+					$('input[name=imagen]').attr('value', nombre_imagen);
+
 				}
 
 				lector.readAsDataURL(archivo);
@@ -310,15 +316,22 @@
 			},
 
 			enviar: function(e){
+
 				e.preventDefault();
+
 				var form = e.target;
 				var cliente = new Base.Modelo.Cliente;
+
 				for(a=0; a<7; a++){
+
 					if(form[a].name == 'boton'){ continue; }
+
 				  cliente.set(form[a].name, form[a].value);
+
 				}
 
 				cliente.save({
+
 				}).done(function(e){
 					router.navigate("#perfil/" + e.id , { trigger: true });
 					$('.aviso').html('Nuevo cliente registrado');
@@ -329,55 +342,64 @@
 			},
 
 			subir: function(e){
-				if(e){ e.preventDefault(); e.stopPropagation() }
+				if(e){ e.preventDefault(); }
 
 				var formData = new FormData(this.el);
-				console.log('esto: ', formData);
+				// var formData = new FormData();
+				// var form = this.el;
+
+				// // if(!this.model.isValid() || !$.isEmptyObject(formData)){
+				// // 	$('.mensaje_error').html(this.model.validationError || 'Sin datos');
+				// // 	return;
+				// // }
+
+				// //console.log('esto: ', this);
+				// 	//console.log('for: ', form);
+				// for(var x=0, f; f=form[x]; x++){
+
+				// 	if(f.type == 'button'){ continue }
+
+				// // 	this.model.set(f.name, f.value);
+				// 	formData.append(f.name, f.value);
+					
+				// // 	//console.log('base: ', f.name);
+				// // 	//console.log('valor: ',f.value);
+				// }
+
+
 
 				this.model.save(
 				 	//null,
 				 	formData,
+				 	//this.model,
 					{ 
 				 		//files: $('form :file'),
 						cache: false,
 				 		data: formData,
+				 		//data: this.model.toJSON(),
 				 		processData: false,
-				 		//processData: true,
 				 		contentType: false,
-						//method: 'post',
+				 		success: function(e){
+						 	console.log('Conseguido: ', e);
+							//router.navigate("" , { trigger: true });
+						  //router.navigate("#perfil/" + e.id , { trigger: true });
+							$('.aviso').html('Nuevo cliente registrado');
+						},
 						error: function(a, b, c){
 							console.log('Error: ',c);
 						},
-				 	},
+				 	}
 
-				).done(function(e){
-					router.navigate("" , { trigger: true });
-				  //router.navigate("#perfil/" + e.id , { trigger: true });
-					$('.aviso').html('Nuevo cliente registrado');
-				 	console.log('Conseguido: ', e);
-				});
-
+				);
+				// ).done(function(e){
+				//  	console.log('Conseguido: ', e);
+				// 	//router.navigate("" , { trigger: true });
+				//   router.navigate("#perfil/" + e.id , { trigger: true });
+				// 	$('.aviso').html('Nuevo cliente registrado');
+				// });
 				
 			},
 
-
-			envioConAjax: function(){
-				var formData = new FormData(this.el);
-				console.log('esto: ', formData);
-		    $.ajax({
-		        url: 'clientes_bd.php',
-		        //url: window.location.pathname,
-		        type: 'POST',
-		        data: formData,
-		        success: function (data) {
-		            alert(data)
-		        },
-		        cache: false,
-		        contentType: false,
-		        processData: false
-		    });
-
-			},
 
 		});
 

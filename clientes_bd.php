@@ -1,36 +1,16 @@
 <?php
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+	ini_set('display_errors', 1);
+	error_reporting(E_ALL);
 
-define('BASE_URL', 'localhost/clien_test');
-define('BASE_FILES', '/var/www/html/clien_test/');
-
-
-//include 'conexion.php';
-	
-	function asegurar($dato){
-		$dato = addslashes($dato);
-		$dato = htmlspecialchars($dato);
-		return $dato;
-	}
+	define('BASE_URL', 'localhost/clien_test');
+	define('BASE_FILES', '/var/www/html/clien_test/');
 
 	$base = new PDO("mysql:host=localhost;dbname=clientes", 'usuario', 'pass');
 
 	// Fuente de datos procesados por Backbone
 	$datos = json_decode(file_get_contents('php://input'));
 
-	$imagen = 'sin imagen';
-
-	if(isset($_FILES['imagen'])){
-	
-		if($_FILES['imagen'] != ''){
-			$resultado['img'] = subirImagen('alejo');
-			$ini = substr($resultado['img'], 0, 5);
-			$imagen = ($ini == 'imagen') ? $resultado['img'] : 'avatar.jpg';
-		}
-
-	}
 
 	$metodo = $_SERVER['REQUEST_METHOD'];
 
@@ -54,33 +34,52 @@ define('BASE_FILES', '/var/www/html/clien_test/');
 
 	}
 
-
 	if($metodo == 'POST'){
 
 		//$consulta = "INSERT INTO clientes (nombre, direccion, telefono, email, imagen, comentarios) VALUES (:nombre, :direccion, :telefono, :email, :imagen, :comentarios)";
-		$consulta = "INSERT INTO clientes (nombre, direccion, telefono, prefijo, tel_tipo, imagen, email, comentarios) VALUES (:nombre, :direccion, :telefono, :prefijo, :tel_tipo, :imagen, :email, :comentarios)";
+		$consulta = "INSERT INTO clientes (nombre, direccion, telefono, prefijo, tel_tipo, imagen, email, comentarios) 
+															VALUES (:nombre, :direccion, :telefono, :prefijo, :tel_tipo, :imagen, :email, :comentarios)";
+
 		$peticion = $base->prepare($consulta);
 
 		// Falta sanear $_POST
-		$datos = $_POST;
+		//$datos = $_POST;
+		//$datos = $GLOBALS;
+		//var_export($GLOBALS);
 
-		$peticion->execute(array(
-			':nombre' 		=> $datos['nombre'],
-			':direccion' 	=> $datos['direccion'],
-			':telefono' 	=> $datos['telefono'],
-			':prefijo' 		=> $datos['prefijo'],
-			':tel_tipo' 	=> $datos['tel_tipo'],
-			':imagen' 		=> $imagen,
-			':email' 			=> $datos['email'],
-			':comentarios' => $datos['comentarios'],
-			));
-		$resultado['id'] = $base->lastInsertId();
+		$imagen = preparar_atributo_imagen($datos -> nombre);
 
-		echo json_encode($resultado);
+		// $peticion->execute(array(
+		// 	':nombre' 		=> $datos['nombre'],
+		// 	':direccion' 	=> $datos['direccion'],
+		// 	':telefono' 	=> $datos['telefono'],
+		// 	':prefijo' 		=> $datos['prefijo'],
+		// 	':tel_tipo' 	=> $datos['tel_tipo'],
+		// 	':imagen' 		=> $imagen,
+		// 	':email' 			=> $datos['email'],
+		// 	':comentarios' => $datos['comentarios'],
+		// 	));
+
+		// $peticion->execute(array(
+		// 	':nombre' 		=> $datos -> nombre,
+		// 	':direccion' 	=> $datos -> direccion,
+		// 	':telefono' 	=> $datos -> telefono,
+		// 	':prefijo' 		=> $datos -> prefijo,
+		// 	':tel_tipo' 	=> $datos -> tel_tipo,
+		// 	':imagen' 		=> $imagen,
+		// 	':email' 			=> $datos -> email,
+		// 	':comentarios' => $datos -> comentarios,
+		// 	));
+		// $resultado['id'] = $base->lastInsertId();
+
+		//echo json_encode($resultado);
+		echo json_encode($imagen);
+		echo json_encode($datos);
 
 	}
 
 	if($metodo == 'PUT'){
+
 		$consulta = "UPDATE clientes 
 								 SET 		nombre 	  = :nombre, 
 												direccion = :direccion, 
@@ -97,18 +96,22 @@ define('BASE_FILES', '/var/www/html/clien_test/');
 			// Falta sanear $_POST
 		$datos = $_POST;
 
+		$imagen = preparar_atributo_imagen($_POST['nombre']);
+
 		$resultado = $peticion->execute(array(
 			':nombre' 		=> $datos['nombre'],
 			':direccion' 	=> $datos['direccion'],
 			':telefono' 	=> $datos['telefono'],
 			':prefijo' 		=> $datos['prefijo'],
+			':tel_tipo' 	=> $datos['tel_tipo'],
 			':email' 			=> $datos['email'],
 			':imagen' 		=> $imagen,
-			//':imagen' 		=> $datos->imagen,
 			':comentarios' => $datos['comentarios'],
 			':id' => $datos['id'],
 			));
+
 		echo ($resultado) ? json_encode(['id' => $datos->id]) : '';
+
 	}
 
 	if($metodo == "DELETE"){
@@ -120,13 +123,48 @@ define('BASE_FILES', '/var/www/html/clien_test/');
 		//$peticion->execute(array(':id' => $id));
 
 		$resultado = $peticion->execute(array(':id' => $id));
+
 		echo json_encode($id);
+
+	}
+
+	function asegurar($dato){
+		$dato = addslashes($dato);
+		$dato = htmlspecialchars($dato);
+		return $dato;
+	}
+
+	function preparar_atributo_imagen($nombre_cliente){
+	
+		$imagen = 'avatar.jpg';
+
+		if(isset($_FILES['imagen'])){
+		
+			if($_FILES['imagen'] != ''){
+
+				$imagen_subida = subirImagen($nombre_cliente);
+
+				$imagen = crea_atributo_imagen($imagen_subida);
+
+			} else {
+
+				//$imagen = 'sin imagen';
+
+			}
+
+		}
+		
+		return $imagen;
+
+
 	}
 
 	function subirImagen($nombre){
 
 		$directorio = 'subidas/';
+
 		$archivo = $directorio . basename($_FILES['imagen']['name']);
+
 		$tipo = pathinfo($archivo, PATHINFO_EXTENSION);
 
 		$test = getimagesize($_FILES['imagen']['tmp_name']);
@@ -137,9 +175,14 @@ define('BASE_FILES', '/var/www/html/clien_test/');
 
 				if($tipo == "jpg" || $tipo == "png" || $tipo == "jpeg" || $tipo == "gif"){
 
-					if(move_uploaded_file($_FILES['imagen']['tmp_name'], BASE_FILES . $directorio . 'imagen-' . $nombre . '.' . $tipo)){
+					$nombre_imagen = 'imagen-' . $nombre_cliente . '.' . $tipo;
 
-						$respuesta = 'imagen-' . $nombre . '.' . $tipo;
+					$subida = move_uploaded_file(	$_FILES['imagen']['tmp_name'],
+																				BASE_FILES . $directorio . $nombre_imagen );
+
+					if($subida){
+
+						$respuesta = $nombre_imagen;
 
 					}	else {
 
@@ -164,6 +207,17 @@ define('BASE_FILES', '/var/www/html/clien_test/');
 			$respuesta = 'El archivo no es una imagen';
 
 		}
+
+		return $respuesta;
+
+	}
+
+	function crea_atributo_imagen($nombre_imagen){
+
+		$ini = substr($nombre_imagen, 0, 5);
+		$atributo_imagen = ($ini == 'imagen') ? $nombre_imagen : 'avatar.jpg';
+
+		return $atributo_imagen;
 
 	}
 
