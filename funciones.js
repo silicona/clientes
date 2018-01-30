@@ -26,7 +26,7 @@
 			defaults: {
 				nombre: '',
 				direccion: '',
-				telefono: '',
+				telefono: '', 
 				prefijo: '34',
 				tel_tipo: 'movil',
 				email: '',
