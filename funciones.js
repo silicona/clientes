@@ -249,7 +249,9 @@
 
 				//this.model.on('change', this.render, this);
 
-				this.model.on('change:cid', this.render, this);
+				//this.model.on('change:cid', this.render, this);
+				this.titulo = e.titulo;
+				this.boton = e.boton;
 
 			},
 
@@ -257,8 +259,10 @@
 			render: function(e){
 
 				var datos = { 
+
 					titulo: this.titulo,
 					boton: this.boton,
+
 				};
 
 				datos = Object.assign(datos, this.model.toJSON());
@@ -266,13 +270,17 @@
 				//console.log('datos: ', datos);
 
 				$('.pizarra').html(this.$el.html(this.template(datos)));
+
+				//nombre.replace(['_', /[\s|\b]\w/g], [' ', function(letra){ letra.toUpperCase()}])
 			},
 
 
 			events: {
+
 				'keypress #telefono': 'formatearTel',
 				'change .input-imagen': 'verPreimagen',
 				'click .boton_formulario': 'subir',
+			
 			},
 
 			formatearTel: function(e){
@@ -280,7 +288,7 @@
 				perm = hacerRango(45, 58); // con e.charCode
 				permitida = perm.find(function(el){	if(el == e.charCode){ return true } else { false } });
 
-				if(!permitida){ alert('Caracter no permitodo'); return false }
+				if(!permitida){ alert('Caracter no permitido'); return false }
 
 			},
 
@@ -310,99 +318,51 @@
 
 			},
 
-
-			enviar: function(e){
-
-				e.preventDefault();
-
-				var form = e.target;
-				var cliente = new Base.Modelo.Cliente;
-
-				for(a=0; a<7; a++){
-
-					if(form[a].name == 'boton'){ continue; }
-
-				  cliente.set(form[a].name, form[a].value);
-
-				}
-
-				cliente.save({
-
-				}).done(function(e){
-					router.navigate("#perfil/" + e.id , { trigger: true });
-					$('.aviso').html('Nuevo cliente registrado');
-				}).fail(function(e){
-					router.navigate("clientes", { trigger: true });
-					$('.aviso').html('Error en el registro');
-				});
-			},
-
 			subir: function(e){
 
 				if(e){ e.preventDefault(); }
 
-				//console.log('Evento: ', e);
-				//console.log('arch: ', $('.foto', '.col-imagen-cliente'));
-
-
-				//var formData = new FormData(this.el);
-				// var formData = new FormData();
-				// formData.append('arch',  this.el[6].files[0])
-
-				var imagen_base = $('.foto', '.col-imagen-cliente')[0].src.split(',')[1] || '';
-				//console.log(imagen_base);
-
 				var form = this.el;
 
-				for(var x=0, f; f=form[x]; x++){
+				var nombre = form[0].value.replace(/\s/g, '_').toLowerCase();
+				var direccion = form[1].value.replace(/\s/g, '_').toLowerCase();
 
-				 	if( (f.type == 'button') || (f.type = 'files' ) ){ continue }
+				this.model.set('nombre', nombre);
+				this.model.set('direccion', direccion);
+				this.model.set('prefijo', form[2].value);
+				this.model.set('telefono', form[3].value);
+				this.model.set('tel_tipo', form[4].value);
+				this.model.set('email', form[5].value);
+				//this.model.set('imagen', form[6].value);
+				this.model.set('comentarios', form[8].value);
+				
+				var imagen_base = $('.foto', '.col-imagen-cliente')[0].src.split(',')[1] || this.model.get('imagen');
+				
+				console.log(imagen_base);
+				console.log('modelo_id', this.model.get('id'));
 
-				 	if( (f.name == 'nombre') || (f.name == 'direccion') ){
+				this.model.save({ cache: false,
 
-				 		//f.value = f.value.toLowerCase();
-				 		//f.value = f.value.replace(' ', '_');
+											 		data: { base64: imagen_base },
 
-				 	}
+											 		processData: false,
 
-					 this.model.set(f.name, f.value);
+											 		contentType: false,
 
-				}
-				 	console.log('modelo', form);
+				}).done(function(e){
 
-
-				this.model.save(
-				 	//formData,
-					{ 
-						//files: this.el[6].files[0],
-						cache: false,
-				 		//data: formData,
-				 		data: { base64: imagen_base },
-				 		processData: false,
-				 		contentType: false,
-				 		
-					 // 	success: function(e){
-					 // 		console.log('Conseguido: ', e);
-						//   router.navigate("#perfil/" + e.id , { trigger: true });
-						// 	$('.aviso').html('Nuevo cliente registrado');
-						// },
-
-						error: function(a, b, c){
-							console.log('Error: ',c);
-						},
-				 	},
-
-				//);
-				).done(function(e){
-				 	console.log('Conseguido: ', e);
-					//router.navigate("" , { trigger: true });
 				  router.navigate("#perfil/" + e.id , { trigger: true });
-					$('.aviso').html('Nuevo cliente registrado');
+
+					$('.aviso').html(e.aviso);
+
+				}).fail(function(e){
+
+					router.navigate("clientes", { trigger: true });
+
+					$('.aviso').html('Error en el registro');
+
 				});
 										  
-				//router.navigate("#perfil/" +  , { trigger: true });
-
-				//router.navigate("" , { trigger: true });
 			},
 
 		});
@@ -434,11 +394,10 @@
 				this.limpiar('aviso');
 
 				var cliente = new Base.Modelo.Cliente();
-				var vista_formulario = new Base.Vista.Formulario({ model: cliente });
-				//console.log(cliente);
+				var vista_formulario = new Base.Vista.Formulario({ model: cliente, 
+																													 titulo: 'Registrar cliente',
+																													 boton: 'Registrar' });
 
-				vista_formulario.titulo = 'Registrar cliente';
-				vista_formulario.boton = 'Registrar';
 				vista_formulario.render();
 
 			},
@@ -451,10 +410,13 @@
 				var cliente = new Base.Modelo.Cliente({ id: id });
 
 				cliente.fetch().done(function(modelo){
-					console.log(modelo);
-					var vista_form = new Base.Vista.Formulario({ model: modelo });
-					vista_form.titulo = 'Editar cliente';
-					vista_form.boton = 'Actualizar';
+					var vista_form = new Base.Vista.Formulario({ model: cliente,
+																											 titulo: 'Editar cliente',
+																											 boton: 'Actualizar' });
+					//vista_form.titulo = 'Editar cliente';
+					//vista_form.boton = 'Actualizar';
+					vista_form.render();
+					console.log('modelo', cliente.get('id'));
 
 				});
 
