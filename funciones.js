@@ -341,56 +341,68 @@
 
 				if(e){ e.preventDefault(); }
 
-				console.log('Evento: ', e);
-				console.log('arch: ', this.el[6].files[0]);
+				//console.log('Evento: ', e);
+				//console.log('arch: ', $('.foto', '.col-imagen-cliente'));
 
 
 				//var formData = new FormData(this.el);
+				// var formData = new FormData();
+				// formData.append('arch',  this.el[6].files[0])
 
-				var formData = new FormData();
-				formData.append('arch',  this.el[6].files[0])
+				var imagen_base = $('.foto', '.col-imagen-cliente')[0].src.split(',')[1] || '';
+				//console.log(imagen_base);
 
 				var form = this.el;
 
 				for(var x=0, f; f=form[x]; x++){
 
-				 	if(f.type == 'button'){ continue }
+				 	if( (f.type == 'button') || (f.type = 'files' ) ){ continue }
 
-					 	this.model.set(f.name, f.value);
-				// 	formData.append(f.name, f.value);
+				 	if( (f.name == 'nombre') || (f.name == 'direccion') ){
+
+				 		//f.value = f.value.toLowerCase();
+				 		//f.value = f.value.replace(' ', '_');
+
+				 	}
+
+					 this.model.set(f.name, f.value);
+
 				}
+				 	console.log('modelo', form);
 
-				console.log(this.el);
 
 				this.model.save(
 				 	//formData,
 					{ 
 						//files: this.el[6].files[0],
 						cache: false,
-				 		data: formData,
+				 		//data: formData,
+				 		data: { base64: imagen_base },
 				 		processData: false,
 				 		contentType: false,
 				 		
-					 	success: function(e){
-					 		console.log('Conseguido: ', e);
-							//router.navigate("" , { trigger: true });
-						  router.navigate("#perfil/" + e.id , { trigger: true });
-							$('.aviso').html('Nuevo cliente registrado');
-						},
+					 // 	success: function(e){
+					 // 		console.log('Conseguido: ', e);
+						//   router.navigate("#perfil/" + e.id , { trigger: true });
+						// 	$('.aviso').html('Nuevo cliente registrado');
+						// },
 
 						error: function(a, b, c){
 							console.log('Error: ',c);
 						},
 				 	},
 
-				);
-				// ).done(function(e){
-				//  	console.log('Conseguido: ', e);
-				// 	//router.navigate("" , { trigger: true });
-				//   router.navigate("#perfil/" + e.id , { trigger: true });
-				// 	$('.aviso').html('Nuevo cliente registrado');
-				// });
-				
+				//);
+				).done(function(e){
+				 	console.log('Conseguido: ', e);
+					//router.navigate("" , { trigger: true });
+				  router.navigate("#perfil/" + e.id , { trigger: true });
+					$('.aviso').html('Nuevo cliente registrado');
+				});
+										  
+				//router.navigate("#perfil/" +  , { trigger: true });
+
+				//router.navigate("" , { trigger: true });
 			},
 
 		});
