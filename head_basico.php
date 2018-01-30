@@ -164,11 +164,7 @@
 			<input type="email" name="email" id="email" class="form-control" value="<%- email %>">
 
 	</div>
-<<<<<<< HEAD
-	<div class="form-group">
-		<label for="imagen">Imagen</label>
-		<input type="file" name="imagen" class="imagen">
-=======
+
 
 	<div class="form-group row">
 
@@ -196,7 +192,6 @@
 
 		</div>
 
->>>>>>> d41f77b2dfd365071b64f769b2bf4574caf96d4f
 	</div>
 
 	<div class="form-group">

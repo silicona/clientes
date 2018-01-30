@@ -428,3 +428,31 @@ Base.Vista.Preview = Backbone.View.extend({
 		// var envioAjax = function(e){
 		// 	e.preventDefault();
 		// }
+
+
+
+			// verImagen: function(e){
+
+			// 	var imag = new Base.Vista.Preview({ el: $(e.target).parent()});
+			// 	//console.log(e.target.files);
+			// 	archivos = e.target.files;
+			// 	for (var i = 0, f; f = archivos[i]; i++) {
+   //      //Solo admitimos imágenes.
+   //      if (!f.type.match('image.*')) {
+   //        continue;
+   //      }
+        
+   //      var reader = new FileReader();
+        
+   //      reader.onload = (function(theFile) {
+   //        return function(e) {
+   //            // Insertamos la imagen
+   //            //document.getElementById("list").innerHTML = ['<img class="thumb" src="', e.target.result,'" title="', escape(theFile.name), '"/>'].join('');
+			// 				imag.render(e.target.result);
+   //          };
+   //        })(f);
+          
+   //        reader.readAsDataURL(f);
+   //      }
+      
+			// },

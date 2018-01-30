@@ -5,16 +5,13 @@
 
 	define('BASE_URL', 'localhost/clien_test');
 	define('BASE_FILES', '/var/www/html/clien_test/');
+	//define('BASE_FILES', '/Applications/XAMPP/htdocs/alejo/clientes/');
 
-<<<<<<< HEAD
-//	$base = new PDO("mysql:host=localhost;dbname=clientes", 'usuario', 'pass');
-	$base = new PDO("mysql:host=localhost;dbname=clientes_backbone", 'usuario', 'pass');
 
-=======
 	$base = new PDO("mysql:host=localhost;dbname=clientes", 'usuario', 'pass');
+	//$base = new PDO("mysql:host=localhost;dbname=clientes_backbone", 'usuario', 'pass');
 
-	// Fuente de datos procesados por Backbone
->>>>>>> d41f77b2dfd365071b64f769b2bf4574caf96d4f
+		// Fuente de datos procesados por Backbone
 	$datos = json_decode(file_get_contents('php://input'));
 
 
@@ -48,12 +45,16 @@
 
 		$peticion = $base->prepare($consulta);
 
-		// Falta sanear $_POST
-		//$datos = $_POST;
-		//$datos = $GLOBALS;
-		//var_export($GLOBALS);
+		// // Falta sanear $_POST
 
-		$imagen = preparar_atributo_imagen($datos -> nombre);
+		//$datos = $_POST;
+
+		// //$imagen = preparar_atributo_imagen($datos['nombre']);
+
+		//$res = preparar_atributo_imagen($_POST['nombre'], $_POST['imagen']);
+		//$res['imagen'] = $imagen;
+
+		//$resultado['subida'] = $res['subida'];
 
 		// $peticion->execute(array(
 		// 	':nombre' 		=> $datos['nombre'],
@@ -61,26 +62,33 @@
 		// 	':telefono' 	=> $datos['telefono'],
 		// 	':prefijo' 		=> $datos['prefijo'],
 		// 	':tel_tipo' 	=> $datos['tel_tipo'],
-		// 	':imagen' 		=> $imagen,
+		// 	':imagen' 		=> $res['imagen'],
 		// 	':email' 			=> $datos['email'],
 		// 	':comentarios' => $datos['comentarios'],
 		// 	));
+		//$resultado['id'] = $base->lastInsertId();
 
-		// $peticion->execute(array(
-		// 	':nombre' 		=> $datos -> nombre,
-		// 	':direccion' 	=> $datos -> direccion,
-		// 	':telefono' 	=> $datos -> telefono,
-		// 	':prefijo' 		=> $datos -> prefijo,
-		// 	':tel_tipo' 	=> $datos -> tel_tipo,
-		// 	':imagen' 		=> $imagen,
-		// 	':email' 			=> $datos -> email,
-		// 	':comentarios' => $datos -> comentarios,
-		// 	));
-		// $resultado['id'] = $base->lastInsertId();
+		$res = preparar_atributo_imagen($datos);
 
-		//echo json_encode($resultado);
-		echo json_encode($imagen);
-		echo json_encode($datos);
+		$peticion->execute(array(
+			':nombre' 		=> $datos -> nombre,
+			':direccion' 	=> $datos -> direccion,
+			':telefono' 	=> $datos -> telefono,
+			':prefijo' 		=> $datos -> prefijo,
+			':tel_tipo' 	=> $datos -> tel_tipo,
+			':imagen' 		=> $res['imagen'],
+			':email' 			=> $datos -> email,
+			':comentarios' => $datos -> comentarios,
+			));
+
+		$resultado['id'] = $base->lastInsertId();
+
+		$resultado['archivo'] = $_FILES;
+		$resultado['datos'] = $_POST;
+		$resultado['datos'] = $datos;
+		$resultado['subida'] = $res;
+		
+		echo json_encode($resultado);
 
 	}
 
@@ -102,22 +110,29 @@
 			// Falta sanear $_POST
 		$datos = $_POST;
 
-		$imagen = preparar_atributo_imagen($_POST['nombre']);
+		// $res = preparar_atributo_imagen($_POST['nombre'], $_POST['imagen']);
 
-		$resultado = $peticion->execute(array(
-			':nombre' 		=> $datos['nombre'],
-			':direccion' 	=> $datos['direccion'],
-			':telefono' 	=> $datos['telefono'],
-			':prefijo' 		=> $datos['prefijo'],
-			':tel_tipo' 	=> $datos['tel_tipo'],
-			':email' 			=> $datos['email'],
-			':imagen' 		=> $imagen,
-			':comentarios' => $datos['comentarios'],
-			':id' => $datos['id'],
-			));
+		// $actualizacion = $peticion->execute(array(
+		// 	':nombre' 		=> $datos['nombre'],
+		// 	':direccion' 	=> $datos['direccion'],
+		// 	':telefono' 	=> $datos['telefono'],
+		// 	':prefijo' 		=> $datos['prefijo'],
+		// 	':tel_tipo' 	=> $datos['tel_tipo'],
+		// 	':email' 			=> $datos['email'],
+		// 	':imagen' 		=> $res['imagen'],
+		// 	':comentarios' => $datos['comentarios'],
+		// 	':id' => $datos['id'],
+		// 	));
 
-		echo ($resultado) ? json_encode(['id' => $datos->id]) : '';
+		//$resultado['id'] = $datos['id'];
 
+		//$resultado['subida'] = $res['subida'];
+		$resultado['archivo'] = $_FILES;
+		$resultado['datos'] = $_POST;
+
+		//echo ($actualizacion) ? json_encode($resultado) : '';
+
+		echo json_encode($resultado);
 	}
 
 	if($metodo == "DELETE"){
@@ -140,19 +155,49 @@
 		return $dato;
 	}
 
-	function preparar_atributo_imagen($nombre_cliente){
+	//function preparar_atributo_imagen($nombre_cliente, $imagen_previa){
+	function preparar_atributo_imagen($datos){
 	
 		$imagen = 'avatar.jpg';
 
-		if(isset($_FILES['imagen'])){
+		// if(isset($_FILES['imagen_archivo'])){
 		
-			if($_FILES['imagen'] != ''){
+		// 	if($_FILES['imagen_archivo']['name'] != ''){
 
-				$imagen_subida = subirImagen($nombre_cliente);
+		// 		$imagen_subida = subirImagen($nombre_cliente);
+		// 		$res['subida'] = $imagen_subida;
 
-				$imagen = crea_atributo_imagen($imagen_subida);
+		// 		$imagen = crea_atributo_imagen($imagen_subida);
 
-			} else {
+		// 	} else if($imagen_previa != 'avatar.jpg'){
+
+		// 		$imagen = $imagen_previa;
+
+		// 		//$imagen = 'sin imagen';
+
+		// 	}
+
+		// }
+		
+		//return $imagen;
+		//$res['imagen'] = $imagen;
+
+		//if(isset($imagen_archivo)){
+
+		if($imagen_archivo = $datos -> imagen_archivo){
+
+			if($imagen_archivo != ''){
+
+				//$imagen_leida = readFile($imagen_archivo);
+
+				// $imagen_subida = subirImagen($nombre_cliente);
+				//$res['subida'] = $imagen_leida;
+
+				// $imagen = crea_atributo_imagen($imagen_subida);
+
+			} else if($imagen_previa != 'avatar.jpg'){
+
+				//$imagen = $imagen_previa;
 
 				//$imagen = 'sin imagen';
 
@@ -160,20 +205,23 @@
 
 		}
 		
-		return $imagen;
+		//return $imagen;
+		$res['imagen'] = $imagen;
+
+		return $res;
 
 
 	}
 
-	function subirImagen($nombre){
+	function subirImagen($nombre_cliente){
 
 		$directorio = 'subidas/';
 
-		$archivo = $directorio . basename($_FILES['imagen']['name']);
+		$archivo = $directorio . basename($_FILES['imagen_archivo']['name']);
 
 		$tipo = pathinfo($archivo, PATHINFO_EXTENSION);
 
-		$test = getimagesize($_FILES['imagen']['tmp_name']);
+		$test = getimagesize($_FILES['imagen_archivo']['tmp_name']);
 
 		if($test){
 
@@ -183,7 +231,7 @@
 
 					$nombre_imagen = 'imagen-' . $nombre_cliente . '.' . $tipo;
 
-					$subida = move_uploaded_file(	$_FILES['imagen']['tmp_name'],
+					$subida = move_uploaded_file(	$_FILES['imagen_archivo']['tmp_name'],
 																				BASE_FILES . $directorio . $nombre_imagen );
 
 					if($subida){
@@ -220,7 +268,7 @@
 
 	function crea_atributo_imagen($nombre_imagen){
 
-		$ini = substr($nombre_imagen, 0, 5);
+		$ini = substr($nombre_imagen, 0, 6);
 		$atributo_imagen = ($ini == 'imagen') ? $nombre_imagen : 'avatar.jpg';
 
 		return $atributo_imagen;
