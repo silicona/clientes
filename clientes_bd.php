@@ -47,27 +47,6 @@
 
 		$peticion = $base->prepare($consulta);
 
-		// // Falta sanear $_POST
-
-		//$datos = $_POST;
-		//$res = preparar_atributo_imagen($_POST['nombre'], $_POST['imagen']);
-
-		// $peticion->execute(array(
-		// 	':nombre' 		=> $datos['nombre'],
-		// 	':direccion' 	=> $datos['direccion'],
-		// 	':telefono' 	=> $datos['telefono'],
-		// 	':prefijo' 		=> $datos['prefijo'],
-		// 	':tel_tipo' 	=> $datos['tel_tipo'],
-		// 	':imagen' 		=> $res['imagen'],
-		// 	':email' 			=> $datos['email'],
-		// 	':comentarios' => $datos['comentarios'],
-		// 	));
-		//$resultado['id'] = $base->lastInsertId();
-
-		//$resultado['subida'] = $res['subida'];
-		//$resultado['archivo'] = $_FILES;
-		//$resultado['datos'] = $_POST;
-
 		$subida = preparar_atributo_imagen_validado($datos);
 
 		$resultado['peticion'] = $peticion->execute(array(
@@ -85,6 +64,7 @@
 
 		$resultado['subida'] = $subida;
 		$resultado['datos'] = $datos;
+		$resultado['aviso'] = 'Nuevo cliente registrado';
 		
 		echo json_encode($resultado);
 
@@ -105,30 +85,25 @@
 
 		$peticion = $base->prepare($consulta);
 
-			// Falta sanear $_POST
-		$datos = $_POST;
+		$subida = preparar_atributo_imagen_validado($datos);
 
-		// $res = preparar_atributo_imagen($_POST['nombre'], $_POST['imagen']);
+		$resultado['peticion'] = $peticion -> execute( array(
+			':id' 				=> $datos -> id,
+			':nombre' 		=> $datos -> nombre,
+			':direccion' 	=> $datos -> direccion,
+			':telefono' 	=> $datos -> telefono,
+			':prefijo' 		=> $datos -> prefijo,
+			':tel_tipo' 	=> $datos -> tel_tipo,
+			':imagen' 		=> $subida['imagen'],
+			':email' 			=> $datos -> email,
+			':comentarios' => $datos -> comentarios,
+			));
 
-		// $actualizacion = $peticion->execute(array(
-		// 	':nombre' 		=> $datos['nombre'],
-		// 	':direccion' 	=> $datos['direccion'],
-		// 	':telefono' 	=> $datos['telefono'],
-		// 	':prefijo' 		=> $datos['prefijo'],
-		// 	':tel_tipo' 	=> $datos['tel_tipo'],
-		// 	':email' 			=> $datos['email'],
-		// 	':imagen' 		=> $res['imagen'],
-		// 	':comentarios' => $datos['comentarios'],
-		// 	':id' => $datos['id'],
-		// 	));
+		$resultado['error'] = !$resultado['peticion'] ? mysqli_error($base) : 'Sin errores';
 
-		//$resultado['id'] = $datos['id'];
+		$resultado['id'] = $datos -> id;
 
-		//$resultado['subida'] = $res['subida'];
-		$resultado['archivo'] = $_FILES;
-		$resultado['datos'] = $_POST;
-
-		//echo ($actualizacion) ? json_encode($resultado) : '';
+		$resultado['aviso'] = 'Perfil actualizado';
 
 		echo json_encode($resultado);
 	}
@@ -136,10 +111,10 @@
 	if($metodo == "DELETE"){
 
 		$consulta = "DELETE FROM clientes WHERE id = :id";
+		
 		$peticion = $base->prepare($consulta);
 
 		$id = asegurar($_GET['id']);
-		//$peticion->execute(array(':id' => $id));
 
 		$resultado = $peticion->execute(array(':id' => $id));
 
@@ -174,15 +149,16 @@
 
 				$ruta = BASE_FILES . SUBIDAS . $imagen_nombre;
 
-				$salida['subida'] = file_put_contents($ruta, $imagen64);
+				$salida['subida'] = file_put_contents($ruta, base64_decode($imagen64));
 
 				if( $salida['subida'] !== false ){
 
 					$imagen_final = $imagen_nombre;
+					$salida['subida'] = error_get_last();
 
 				} else {
 
-					$salida['subida'] = get_last_error();
+					$salida['subida'] = error_get_last();
 
 				}
 

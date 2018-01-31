@@ -118,7 +118,7 @@
 	<div class="form-group">
 
 		<label for="nombre">Ingrese Nombre:</label>
-		<input type="text" name="nombre" id="nombre" class="form-control" value="<%- nombre %>">
+		<input type="text" name="nombre" id="nombre" class="form-control" value="<%= nombre %>">
 		<small class="form-text text-muted">Los apellidos son opcionales</small>
 
 	</div>

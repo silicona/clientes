@@ -456,3 +456,31 @@ Base.Vista.Preview = Backbone.View.extend({
    //      }
       
 			// },
+
+
+
+			enviar: function(e){
+
+				e.preventDefault();
+
+				var form = e.target;
+				var cliente = new Base.Modelo.Cliente;
+
+				for(a=0; a<7; a++){
+
+					if(form[a].name == 'boton'){ continue; }
+
+				  cliente.set(form[a].name, form[a].value);
+
+				}
+
+				cliente.save({
+
+				}).done(function(e){
+					router.navigate("#perfil/" + e.id , { trigger: true });
+					$('.aviso').html('Nuevo cliente registrado');
+				}).fail(function(e){
+					router.navigate("clientes", { trigger: true });
+					$('.aviso').html('Error en el registro');
+				});
+			},
