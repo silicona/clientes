@@ -38,12 +38,15 @@
 			fileAttribute: 'imagen_archivo',
 
 			validate: function(atrs){
+				var errores = [];
+				// 	//console.dir('validando: ',atrs);
 
-				//console.dir('validando: ',atrs);
-
-				if(atrs.nombre === ''){
-					'El nombre no puede estar en blanco';
+				if(!atrs.nombre){
+			 		errores.push({ atributo: 'nombre', 
+			 									 mensaje: 'El nombre no puede estar en blanco' });
 				}
+
+				return errores.length > 0 ? errores : false;
 
 		  }
 
@@ -242,16 +245,32 @@
 
 			className: 'form ingresar',
 
-			template: obtenerTemplate('form_crear'),
+			template: obtenerTemplate('formulario'),
 
 
 			initialize: function(e){
 
-				//this.model.on('change', this.render, this);
-
-				//this.model.on('change:cid', this.render, this);
 				this.titulo = e.titulo;
 				this.boton = e.boton;
+
+				this.model.on('invalid', function(modelo, errores){
+					this.verErrores(modelo, errores);
+				}, this);
+
+				this.model.on('sync', function(mod, res, opt){
+					if(res.peticion){
+
+						router.navigate("#perfil/" + res.id , { trigger: true });
+						$('.aviso').html(e.aviso);
+					}
+					else {
+
+						router.navigate("clientes", { trigger: true });
+					 	$('.aviso').html('Error en el registro');
+
+					}
+
+				})
 
 			},
 
@@ -272,6 +291,7 @@
 				$('.pizarra').html(this.$el.html(this.template(datos)));
 
 				//nombre.replace(['_', /[\s|\b]\w/g], [' ', function(letra){ letra.toUpperCase()}])
+			
 			},
 
 
@@ -324,46 +344,40 @@
 
 				var form = this.el;
 
-				var nombre = form[0].value.replace(/\s/g, '_').toLowerCase();
-				var direccion = form[1].value.replace(/\s/g, '_').toLowerCase();
+				for(x=0; x<form.length; x++){
+					if(form[x].name == 'boton' || form[x].name == 'imagen_archivo'){ continue }
 
-				this.model.set('nombre', nombre);
-				this.model.set('direccion', direccion);
-				this.model.set('prefijo', form[2].value);
-				this.model.set('telefono', form[3].value);
-				this.model.set('tel_tipo', form[4].value);
-				this.model.set('email', form[5].value);
-				//this.model.set('imagen', form[6].value);
-				this.model.set('comentarios', form[8].value);
+					if((form[x].name == 'nombre') || (form[x].name == 'direccion')){
+						form[x].value = form[x].value.replace(/\s/g, '_').toLowerCase();
+					}
+
+					this.model.set(form[x].name, form[x].value);
+				}
 				
 				var imagen_base = $('.foto', '.col-imagen-cliente')[0].src.split(',')[1] || this.model.get('imagen');
-				
-				console.log(imagen_base);
-				console.log('modelo_id', this.model.get('id'));
 
-				this.model.save({ cache: false,
+				var opciones = {
 
-											 		data: { base64: imagen_base },
+					cache: false,
 
-											 		processData: false,
+					data: { base64: imagen_base },
 
-											 		contentType: false,
+					processData: false,
 
-				}).done(function(e){
+					contentType: false,
 
-				  router.navigate("#perfil/" + e.id , { trigger: true });
+				};
 
-					$('.aviso').html(e.aviso);
-
-				}).fail(function(e){
-
-					router.navigate("clientes", { trigger: true });
-
-					$('.aviso').html('Error en el registro');
-
-				});
-										  
+					// No se ejecutan success, error, done, ni fail
+					// La respuesta se controla por el evento sync
+				this.model.save( opciones );
+  
 			},
+
+			verErrores: function(modelo, errores){
+				console.log('modelo: ', modelo);
+				console.log('errores: ', errores);
+			}
 
 		});
 

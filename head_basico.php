@@ -111,7 +111,7 @@
 </script>
 				<!-- <input type="hidden" value="<%= id %>" name="id"> -->
 
-<script type="text/template" id="form_crear">
+<script type="text/template" id="formulario">
 
 	<legend><%= titulo %></legend>
 

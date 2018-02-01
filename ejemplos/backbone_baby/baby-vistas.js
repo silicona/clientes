@@ -72,7 +72,7 @@ var FeedbackFormView = Backbone.View.extend({
   },
 
   hideErrors: function () {
-      this.$('.control-group').removeClass('error');
+      this.$('input').removeClass('error');
       this.$('.help-inline').text('');
   }
 
