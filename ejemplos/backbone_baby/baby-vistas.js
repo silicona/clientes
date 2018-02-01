@@ -53,18 +53,21 @@ var FeedbackFormView = Backbone.View.extend({
 
     };
 
-    this.model.set('mail', this.$('#email').val())
+    //this.model.set('email', this.$('#email').val())
 
-    this.model.save(null, options);
+    this.model.save(feedback , options);
   },
 
   showErrors: function(errors) {
-    console.log('veo errores');
+    //console.log('veo errores');
       _.each(errors, function (error) {
-          var controlGroup = this.$('#' + error.name);
-          controlGroup.addClass('error');
-          controlGroup.find('.help-inline').text(error.message);
-        console.log(controlGroup);
+        var control = this.$('#' + error.name);
+        padre = control.parent();
+        //var controlGroup = this.$('.' + error.name);
+        control.addClass('error');
+        padre.append($('<small>', { class: 'help-inline' }));
+        $('.help-inline').html(error.message);
+        console.log('control: ', error);
       }, this);
   },
 
