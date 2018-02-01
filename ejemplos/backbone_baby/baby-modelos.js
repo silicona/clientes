@@ -1,8 +1,8 @@
-BASE = 'localhost/clien_test/ejemplos/'
+BASE = 'localhost/clien_test/ejemplos/';
 
 var Feedback = Backbone.Model.extend({
 
-  url: 'feedback.php',
+  url: 'feedback.ph',
 
   defaults: {
     'email': '',
@@ -10,12 +10,15 @@ var Feedback = Backbone.Model.extend({
     'feedback': ''
   },
 
+  initialize: function(){
+    //this.on('invalid'){    }
+  },
+
   validate: function (attrs) {
     var errors = [];
 
     if (!attrs.email) {
 
-      console.log('sin mail');
       //return 'Please fill mail field.';
       errors.push({name: 'email', message: 'Please fill email field.'});
 
@@ -24,10 +27,11 @@ var Feedback = Backbone.Model.extend({
     if (!attrs.feedback) {
 
       //return 'Please fill feedback field.';
-      errors.push({name: 'feedback', message: 'Please fill feedback field.'});
+      //errors.push({name: 'feedback', message: 'Please fill feedback field.'});
 
     }
 
+      console.dir('errores:', errors);
     return errors.length > 0 ? errors : false;
   }
 

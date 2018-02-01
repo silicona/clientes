@@ -38,25 +38,28 @@
 
 </head>
 <body>
-
+<main class="container">
+  
 <h1>Babysteps</h1>
-<nav>
+<nav class="nav nav-bar">
 <a href="http://beletsky.net/blog/categories/babystepsbackbone/">Categoria del blog</a>
 <a href="http://beletsky.net/2012/10/baby-steps-to-backbonejs-starting-up.html">Inicio</a>
 <a href="http://beletsky.net/2012/11/baby-steps-to-backbonejs-model.html">Validacion</a>
+<a href="http://backbonejs.org/">Backbone JS</a>
 </nav>
 
 <script src="baby-modelos.js"></script>
 <script src="baby-vistas.js"></script>
 <script src="baby-app.js"></script>
 
-<div id="app" class="container"></div>
+<div id="app"></div>
 
 
 <script type="text/javascript">
 
 
 </script>
+</main>
 </body>
 </html>
 
