@@ -8,6 +8,7 @@
 	define('BASE_URL', 'localhost/clien_test');
 
 	define('BASE_FILES', '/var/www/html/clien_test/');
+	
 	$base = new PDO("mysql:host=localhost;dbname=clientes", 'usuario', 'pass');
 
 
