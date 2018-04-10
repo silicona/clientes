@@ -1,0 +1,182 @@
+body {
+	font-size: 16px;
+	font-family: verdana, helvetica, sans-serif;
+
+	.centro {
+
+	.pizarra {
+
+	table.inicio, table.perfil {
+	margin: 0 auto;
+	width: auto;
+
+	thead, tfoot {
+	th { text-align: center; }
+	}
+
+	.inicial {
+
+	td { 
+	border-bottom: 2px solid #eee;
+	border-top: unset;
+	padding: .5ex 0;
+	vertical-align: middle;
+	}
+
+	td:first-of-type {
+	width: 200px;
+	font-weight: bold;
+	}
+
+	.boton {
+	display: inline-block;
+	}
+	}
+	}
+
+	table.perfil {
+	width: 80%;
+
+	thead {
+	background-color: #000;
+	color: #fff;
+
+	th {
+	border: unset;
+	}
+	}
+
+	.etiqueta {
+	width: 120px;
+	}
+
+	.dato.nombre {
+	font-weight: bold;
+	}
+
+	.retrato {
+	width: 200px;
+
+	img {
+	width: 150px;
+	display: block;
+	margin: 10px auto;
+	vertical-align: middle;
+	}
+	}
+
+	.comentario {
+	padding: 1ex 2ex;
+	}
+	}
+
+	.cartera {
+
+	thead {
+	background: #eee;
+	background: linear-gradient(to left, #ffffff, #eeeeee);
+
+	th {
+	text-align: center;
+	}
+	}
+
+	caption {
+	text-align: center;
+	font-size: 1.5em;
+	}
+
+	tbody {
+
+	tr {
+
+	.nombre {
+	font-weight: bold;
+	cursor: pointer;
+
+	&:hover {
+	color: red;
+	}
+	}
+	}
+	}
+
+	tfoot th {
+	text-align: center
+	}
+	}
+
+	.form {
+	width: 80%;
+	margin: 1em auto;
+
+	.col-imagen {
+	text-align: center;
+
+	label {
+	display: block;
+	text-align: left;
+	}
+
+	.boton-imagen {
+	font-size: 1.25rem;
+	font-weight: 400;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+
+	cursor: pointer;
+	display: inline-block;
+
+	margin: 10px 0;
+	padding: 0.625rem 1.25rem;
+	border: rgb(206, 206, 206) outset 3px;
+	border-radius: 5px;
+
+	color: #444444;
+	background-color: #dddddd;
+	}
+
+	.input-imagen {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+	}
+	}
+
+	.col-imagen-cliente {
+	padding: 20px;
+	text-align: center;
+
+	.foto {
+	padding: 20px;
+	height: 150px;
+	min-width: 150px;
+	border: 2px dashed #ddd;
+	}
+	}
+
+	}
+	}
+	}
+
+	.lateral {
+		background-color: #eee;
+		text-align: center;
+
+		h3 {}
+	}		
+
+	footer {
+		clear: both;
+		margin: 1em 0;
+		padding: 1ex;
+		background-color: #eee;
+		border-radius: 10px;
+	}
+}
+
+
