@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width">
 	<title>Inicio</title>
 
-	<link rel="stylesheet" type="text/css" href="vendor/bootstrap-3.7.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap-3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/estilo.css">
 
 	<script type="text/javascript" src="vendor/jquery-3.1.1.min.js"></script>

@@ -10,8 +10,8 @@
 
   <meta name="viewport" content="width=device-width">
   <title>Tests BB</title>
-  <link rel="stylesheet" type="text/css" src="../vendor/bootstrap-3.7.7/css/bootstrap.min.css"></script>
-  <link rel="stylesheet" href="../vendor/qunit-2.6.0.css">
+  <link rel="stylesheet" type="text/css" href="../vendor/bootstrap-3.3.7/css/bootstrap.min.css"></script>
+  <link rel="stylesheet" type="text/css" href="../vendor/qunit-2.6.0.css">
   <link rel="stylesheet" type="text/css" href="../css/estilo.css">
 
   <script type="text/javascript" src="../vendor/jquery-3.1.1.min.js"></script>
@@ -34,7 +34,10 @@
 
     <nav class="navbar">
       <a href="../" class="navbrand">Inicio</a>
+      &emsp;
       <a href="https://github.com/delawski/Tutorial-TDD-Backbone.js/blob/master/docs/tutorial-part1.md" target="_blank">Tutorial Delawski</a>
+      &emsp;
+      <a href="http://api.qunitjs.com/" target="_blank">Api QUnit</a>
     </nav>
 
     <section class="row">
@@ -52,6 +55,9 @@
     <script type="text/javascript" src="../js/funciones.js"></script>
 
       <!-- Tests -->
-    <script type="text/javascript" src="tests/vistas.js"></script>
+    <script type="text/javascript" src="vistas/inicio_test.js"></script>
+    <script type="text/javascript" src="modelos/cliente_test.js"></script>
+    <script type="text/javascript" src="colecciones/cartera_test.js"></script>
+    <!-- <script type="text/javascript" src="tests/vistas.js"></script> -->
   </body>
 </html>
