@@ -13,14 +13,30 @@
 	};
 
 	// Constantes
-		Base.Root = 'http://localhost/clien_test/';
-		Base.File = '/home/Silicona/Escritorio/html/clien_test/';
-		Base.Subidas = 'subidas/';
+		URL = window.location.href;
+		
+		if( URL.indexOf('localhost') != false ){
+
+			Base.Root = 'http://localhost/clientes/';
+			Base.File = '/home/silicona/Escritorio/html/clientes/';
+
+		} else {
+
+			Base.Root = '/';
+			Base.File = '/';
+		}
+		
+		console.log(Base.File);
+		Base.Subidas = Base.File + 'subidas/';
 
 	// Modelos
 		Base.Modelo.Cliente = Backbone.Model.extend({
+			
 			url: function(){
-				return this.id ? 'clientes_bd.php?id=' + this.id : 'clientes_bd.php';
+
+				var ruta = Base.Root + 'clientes_bd.php';
+				return this.id ? ruta + '?id=' + this.id : ruta;
+
 			},
 
 			defaults: {
@@ -56,7 +72,7 @@
 	// Coleccion
 		Base.Coleccion.Cartera = Backbone.Collection.extend({
 			model: Base.Modelo.Cliente,
-			url: 'clientes_bd.php',
+			url: Base.Root + 'clientes_bd.php',
 		}),
 
 	// Vistas

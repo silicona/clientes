@@ -7,6 +7,8 @@ QUnit.module( 'Vista de inicio', function( hooks ) {
 
 	hooks.beforeEach( function( assert ){
 
+		var ajax = assert.async(1);
+
 		var Vista = window.Base.Vista.Inicio;
 		assert.ok( ! _.isUndefined( Vista ), 'Vista Inicio definida' );
 		assert.ok( _.isFunction(Vista.prototype.setElement ) && _.isFunction( Vista.prototype.delegateEvents ), 'La vista es Backbone');
@@ -14,15 +16,24 @@ QUnit.module( 'Vista de inicio', function( hooks ) {
 		contenedor = $('<div class="pizarra">Vacia</div>');
 		fixture.append( contenedor );
 
-		coleccion = new window.Base.Coleccion
-		vista = new Vista({});
+		Coleccion = window.Base.Coleccion.Cartera;
+		coleccion = new Coleccion();
+		coleccion.fetch();
 
+		setTimeout(function(){
+			assert.ok( _.size(coleccion) > 0, 'Coleccion rellenada')
+			ajax();
+		}, 1000);
+		
+		vista = new Vista({ collection: coleccion });
+		contenedor.append(vista.el);
 		vista.render();
+
 	});
 	
 	QUnit.test( 'La vista de inicio recibe el listado de clientes', function( assert ){
 
-		assert.ok( contenedor.find(''))
+		assert.ok( contenedor.find('tr').length > 1, 'Hay clientes en la vista' );
 
 	});
 
