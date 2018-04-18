@@ -1,0 +1,9 @@
+# Location: .rspec
+
+--format d
+ 
+#--no-color
+#--warnings
+
+#--format html
+#--out log.html
