@@ -11,4 +11,9 @@ group :development do
   gem 'rspec'
   gem 'capybara'
   gem 'selenium-webdriver'
+
+  gem "cucumber"
+	gem "test-unit" # Actualizacion
+	gem "mechanize"
+	gem "capybara-mechanize"
 end
